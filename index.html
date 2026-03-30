@@ -186,50 +186,71 @@
 
         // Simulación de Envío Masivo (Integración con Worker)
         async function processCampaing() {
-            const file = fileInput.files[0];
-            if (!file) return alert("Por favor carga un CSV");
+    const file = fileInput.files[0];
+    if (!file) return alert("❌ Error: Selecciona un archivo Excel o CSV.");
 
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const text = e.target.result;
-                const rows = text.split('\n').slice(1); // Ignorar cabecera
-                const logContainer = document.getElementById('logContainer');
-                logContainer.innerHTML = ''; // Limpiar logs
-
-                for (let row of rows) {
-                    if (!row.trim()) continue;
-                    const [phone, name] = row.split(',');
-                    
-                    addLog(phone, 'Enviando...', 'waiting');
-                    
-                    // Llamada real al Worker
-                    try {
-                        const response = await fetch('TU_URL_DEL_WORKER', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                to: phone.trim(),
-                                type: document.getElementById('msgType').value,
-                                message: document.getElementById('msgBody').value.replace('{{name}}', name),
-                                templateName: document.getElementById('tplName').value,
-                                components: [{ type: "body", parameters: [{ type: "text", text: name }] }]
-                            })
-                        });
-
-                        const data = await response.json();
-                        
-                        if (response.ok) {
-                            updateLog(phone, 'Éxito', 'success', 'bi-check-all');
-                        } else {
-                            // MANEJO DE ERROR DE IMPACTO
-                            updateLog(phone, data.message || 'Error', 'error', 'bi-shield-slash-fill');
-                        }
-                    } catch (err) {
-                        updateLog(phone, 'Fallo de Red', 'error', 'bi-wifi-off');
-                    }
-                }
-            };
-            reader.readAsText(file);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        let jsonData = [];
+        
+        // Lógica para detectar si es Excel o CSV
+        if (file.name.endsWith('.csv')) {
+            const text = e.target.result;
+            const rows = text.split('\n').filter(r => r.trim() !== '').slice(1);
+            jsonData = rows.map(row => {
+                const cols = row.split(',');
+                return { phone: cols[0]?.trim(), name: cols[1]?.trim() };
+            });
+        } else {
+            // Lógica para Excel (.xlsx o .xls)
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            jsonData = XLSX.utils.sheet_to_json(worksheet);
         }
+
+        // PROCESAMIENTO MASIVO
+        for (let row of jsonData) {
+            // Buscamos el teléfono sin importar si la columna se llama "phone", "telefono" o "celular"
+            const phone = row.phone || row.telefono || row.Telefono || row.Phone || row.celular;
+            const name = row.name || row.nombre || row.Nombre || row.Name || "Cliente";
+
+            if (!phone) continue;
+
+            addLog(phone, 'Validando sesión y enviando...', 'waiting');
+            
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: phone.toString().trim(),
+                        type: document.getElementById('msgType').value,
+                        message: document.getElementById('msgBody').value.replace('{{name}}', name),
+                        templateName: document.getElementById('tplName').value,
+                        components: [{ type: "body", parameters: [{ type: "text", text: name }] }]
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok && result.code === 0) {
+                    updateLog(phone, 'Enviado correctamente', 'success', 'bi-check-all');
+                } else {
+                    updateLog(phone, result.message || 'Error de política', 'error', 'bi-shield-exclamation');
+                }
+            } catch (err) {
+                updateLog(phone, 'Error de conexión', 'error', 'bi-wifi-off');
+            }
+        }
+    };
+
+    // Si es Excel usamos ArrayBuffer, si es CSV usamos Text
+    if (file.name.endsWith('.csv')) {
+        reader.readAsText(file);
+    } else {
+        reader.readAsArrayBuffer(file);
+    }
+}
 
         function addLog(phone, msg, status) {
             const logContainer = document.getElementById('logContainer');
