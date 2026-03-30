@@ -227,68 +227,54 @@
             document.getElementById('group-text').classList.toggle('hidden', type === 'template');
         }
 
-        async function initProcess() {
-            const btn = document.getElementById('sendBtn');
-            btn.disabled = true;
-            let contacts = [];
+async function initProcess() {
+    const btn = document.getElementById('sendBtn');
+    const selectedType = document.getElementById('msgType').value;
+    btn.disabled = true;
+    
+    // ... (Lógica de obtención de contactos que ya tienes) ...
 
-            if (currentMode === 'individual') {
-                const fullNumber = iti.getNumber();
-                if (!iti.isValidNumber()) {
-                    alert("⚠️ Número internacional inválido. Revisa la bandera y los dígitos.");
-                    btn.disabled = false;
-                    return;
-                }
-                contacts.push({ phone: fullNumber.replace('+', ''), name: 'Cliente' });
+    for (let c of contacts) {
+        renderLog(c.phone, 'Sincronizando con NXCloud...', 'waiting');
+        
+        try {
+            // CONFIGURACIÓN DINÁMICA DEL PAYLOAD
+            let payload = {
+                to: c.phone,
+                type: selectedType === 'template_cta3' ? 'template' : selectedType,
+                templateName: selectedType === 'template_cta3' ? 'cta_3' : document.getElementById('tplName').value,
+                // Si es cta_3, enviamos la variable nombre del Excel/Input
+                components: [{ 
+                    type: "body", 
+                    parameters: [{ type: "text", text: c.name }] 
+                }]
+            };
+
+            // Si es mensaje de texto de sesión, añadimos el body
+            if(selectedType === 'text') {
+                payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
+            }
+
+            const res = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await res.json();
+            
+            if (res.ok && result.code === 0) {
+                updateLog(c.phone, 'Transmitido con éxito', 'success', 'bi-check2-circle');
             } else {
-                // Lógica Excel (ya robustecida en versiones anteriores)
-                const file = document.getElementById('file').files[0];
-                if (!file) { alert("⚠️ Carga un archivo Excel."); btn.disabled = false; return; }
-                const data = await file.arrayBuffer();
-                const workbook = XLSX.read(data);
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-                contacts = json.map(r => ({
-                    phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
-                    name: r.name || r.nombre || 'Cliente'
-                })).filter(c => c.phone.length > 5);
+                // Capturamos el error de baneo o falta de sesión
+                updateLog(c.phone, result.message || 'Error de Ventana 24h', 'error', 'bi-shield-exclamation');
             }
-
-            document.getElementById('logs').innerHTML = '';
-            let ok = 0;
-
-            for (let c of contacts) {
-                renderLog(c.phone, 'Sincronizando con NXCloud...', 'waiting');
-                
-                try {
-                    const payload = {
-                        to: c.phone,
-                        type: document.getElementById('msgType').value,
-                        templateName: document.getElementById('tplName').value,
-                        message: document.getElementById('body').value.replace('{{name}}', c.name),
-                        mediaUrl: document.getElementById('mediaUrl').value,
-                        components: [{ type: "body", parameters: [{ type: "text", text: c.name }] }]
-                    };
-
-                    const res = await fetch(WORKER_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await res.json();
-                    
-                    if (res.ok && result.code === 0) {
-                        ok++;
-                        updateLog(c.phone, 'Transmitido con éxito', 'success', 'bi-check2-circle');
-                    } else {
-                        updateLog(c.phone, result.message || 'Bloqueado por reglas de Meta (24h)', 'error', 'bi-shield-exclamation');
-                    }
-                } catch (e) {
-                    updateLog(c.phone, 'Error de infraestructura', 'error', 'bi-wifi-off');
-                }
-                document.getElementById('counter').innerText = `EXECUTED: ${ok}/${contacts.length}`;
-            }
-            btn.disabled = false;
+        } catch (e) {
+            updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off');
         }
+    }
+    btn.disabled = false;
+}
 
         function renderLog(phone, msg, status) {
             const container = document.getElementById('logs');
