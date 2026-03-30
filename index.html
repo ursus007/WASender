@@ -7,91 +7,92 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/css/intlTelInput.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
 
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%);
             color: #f8fafc;
             min-height: 100vh;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
             border-color: #38bdf8;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .gradient-text {
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-primary-nx {
+        .gradient-btn {
             background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
-        .btn-primary-nx:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-            filter: brightness(1.1);
-        }
-
-        .btn-primary-nx:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .status-waiting { background: #334155; color: #94a3b8; }
-        .status-success { background: #065f46; color: #34d399; }
-        .status-error { background: #7f1d1d; color: #f87171; }
-
+        /* Phone Input Styling Overrides */
+        .iti { width: 100%; }
+        .iti__country-list { background-color: #1e293b; border: 1px solid #334155; color: white; }
+        .iti__country:hover { background-color: #334155; }
+        
         input, select, textarea {
-            background: rgba(15, 23, 42, 0.6) !important;
+            background: rgba(15, 23, 42, 0.8) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: white !important;
-            border-radius: 12px !important;
+            border-radius: 14px !important;
         }
 
-        input:focus { border-color: #38bdf8 !important; outline: none; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+        .status-pill {
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
+        
+        /* Custom scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                    <span class="text-blue-600 font-black text-2xl tracking-tighter">NX</span>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                    <span class="text-blue-600 font-black text-3xl">NX</span>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">NXAI<span class="gradient-text"> Manager</span></h1>
-                    <p class="text-slate-400 text-xs font-bold tracking-widest uppercase">Next-Gen Comms</p>
+                    <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">AI</span></h1>
+                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Global Messaging Core</p>
                 </div>
             </div>
-            <div class="hidden md:block text-right">
-                <p class="text-[10px] text-slate-500 font-black uppercase">Service Status</p>
-                <div class="text-green-400 text-sm font-bold flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> ONLINE
+            
+            <div class="flex gap-4 items-center glass-card px-6 py-3">
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">Balance Global</p>
+                    <p class="text-white font-mono text-lg">$ --.--</p>
+                </div>
+                <div class="h-8 w-[1px] bg-slate-700"></div>
+                <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span> API CONNECTED
                 </div>
             </div>
         </header>
@@ -99,70 +100,90 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <div class="lg:col-span-5 space-y-6">
-                <div class="glass-card p-6">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
-                        <i class="bi bi-sliders2-vertical text-blue-400"></i> CONFIGURACIÓN
+                <div class="glass-card p-8">
+                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="bi bi-person-plus-fill"></i> 01. Destino y Estrategia
                     </h2>
 
-                    <div class="mb-6 p-4 bg-white/5 rounded-2xl border border-white/10">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 ml-1">Número Individual (Perú)</label>
-                        <div class="flex gap-2">
-                            <div class="relative flex-grow">
-                                <span class="absolute left-3 top-3 text-slate-500 font-bold">+</span>
-                                <input type="text" id="singlePhone" class="w-full p-3 pl-7 text-sm" placeholder="9XXXXXXXX">
-                            </div>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center border-blue-500 type-active">
+                            <i class="bi bi-phone text-2xl mb-1 block"></i>
+                            <span class="text-[10px] font-bold uppercase">Individual</span>
+                        </button>
+                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-4 text-center opacity-50">
+                            <i class="bi bi-layers text-2xl mb-1 block"></i>
+                            <span class="text-[10px] font-bold uppercase">Masivo (Excel)</span>
+                        </button>
+                    </div>
+
+                    <div id="ind-target" class="mb-6 animate-fade-in">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Número Internacional</label>
+                        <input type="tel" id="phone" class="w-full p-4">
+                    </div>
+
+                    <div id="bulk-target" class="mb-6 hidden">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Base de Datos (.xlsx / .csv)</label>
+                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center hover:border-blue-500 cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
+                            <input type="file" id="file" class="hidden" accept=".xlsx, .xls, .csv">
+                            <i class="bi bi-cloud-upload text-2xl text-slate-500 mb-2 block"></i>
+                            <p id="file-name" class="text-xs text-slate-400 italic font-mono">Click para cargar</p>
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 ml-1">Carga Masiva (Excel/CSV)</label>
-                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center hover:border-blue-500 transition-all cursor-pointer bg-slate-900/40" id="dropZone">
-                            <i class="bi bi-file-earmark-excel text-3xl text-slate-500 mb-2 block"></i>
-                            <input type="file" id="fileInput" class="hidden" accept=".csv, .xlsx, .xls">
-                            <p class="text-sm text-slate-300 font-medium" id="fileName">Arrastra tu base de datos aquí</p>
+                    <div class="h-[1px] bg-slate-800 my-8"></div>
+
+                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="bi bi-chat-left-dots-fill"></i> 02. Tipo de Contenido
+                    </h2>
+
+                    <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
+                        <optgroup label="Apertura (Fuera de ventana)">
+                            <option value="template">🚀 HSM Template (Certificado)</option>
+                        </optgroup>
+                        <optgroup label="Sesión (Dentro de ventana)">
+                            <option value="text">💬 Mensaje de Texto</option>
+                            <option value="image">🖼️ Imagen / Fotografía</option>
+                            <option value="document">📄 Documento PDF / Excel</option>
+                            <option value="audio">🎙️ Nota de Voz / Audio</option>
+                        </optgroup>
+                    </select>
+
+                    <div id="content-fields" class="space-y-4">
+                        <div id="group-template">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre de la Plantilla en Meta</label>
+                            <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: bienvenida_premium">
+                        </div>
+                        
+                        <div id="group-text" class="hidden">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Cuerpo del Mensaje</label>
+                            <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}} para variables"></textarea>
+                        </div>
+
+                        <div id="group-media" class="hidden">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Enlace del Archivo (URL Pública)</label>
+                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://miweb.com/archivo.pdf">
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 ml-1">Tipo de Mensaje</label>
-                        <select id="msgType" class="w-full p-4 text-sm font-bold cursor-pointer" onchange="toggleInputs()">
-                            <option value="template">🚀 PLANTILLA (Recomendado para inicio)</option>
-                            <option value="text">💬 TEXTO DE SESIÓN (Solo ventana 24h)</option>
-                        </select>
-                    </div>
-
-                    <div id="dynamicInputs" class="space-y-4">
-                        <div id="tplGroup">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 ml-1">Nombre del Template</label>
-                            <input type="text" id="tplName" class="w-full p-4 font-mono text-xs" placeholder="ej: saludo_general">
-                        </div>
-                        <div id="textGroup" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 ml-1">Mensaje Personalizado</label>
-                            <textarea id="msgBody" rows="4" class="w-full p-4 text-sm" placeholder="Hola {{name}}..."></textarea>
-                        </div>
-                    </div>
-
-                    <button id="sendBtn" onclick="executeCampaign()" class="w-full btn-primary-nx mt-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2">
-                        <i class="bi bi-lightning-charge-fill"></i> EJECUTAR ENVÍOS
+                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all hover:scale-[1.02]">
+                        <i class="bi bi-lightning-fill mr-2"></i> Transmitir Mensaje
                     </button>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <div class="glass-card p-6 h-full flex flex-col min-h-[600px]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-bold flex items-center gap-2">
-                            <i class="bi bi-broadcast text-blue-400"></i> LOG DE ACTIVIDAD
+                <div class="glass-card p-8 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                            <i class="bi bi-gpu-card"></i> Process Engine Status
                         </h2>
-                        <div id="stats" class="text-[10px] font-black text-slate-500">
-                            IDLE
-                        </div>
+                        <div id="counter" class="font-mono text-xs text-slate-500">READY</div>
                     </div>
 
-                    <div id="logContainer" class="flex-grow overflow-auto space-y-3 pr-2 custom-scrollbar">
+                    <div id="logs" class="flex-grow space-y-4 overflow-y-auto max-h-[650px] pr-4 custom-scroll">
                         <div class="text-center py-20 opacity-20 italic">
-                            <i class="bi bi-terminal text-5xl block mb-2"></i>
-                            Esperando ejecución...
+                            <i class="bi bi-terminal-x text-6xl block mb-4"></i>
+                            <p class="font-mono text-sm">Esperando parámetros de envío...</p>
                         </div>
                     </div>
                 </div>
@@ -172,115 +193,140 @@
 
     <script>
         const WORKER_URL = 'https://nxlink-backend.ursus006.workers.dev';
+        let currentMode = 'individual';
+        let iti;
 
-        // 1. Lógica de UI
-        function toggleInputs() {
-            const isTpl = document.getElementById('msgType').value === 'template';
-            document.getElementById('tplGroup').classList.toggle('hidden', !isTpl);
-            document.getElementById('textGroup').classList.toggle('hidden', isTpl);
-        }
+        // Inicializar Flags Internacionales
+        const input = document.querySelector("#phone");
+        iti = window.intlTelInput(input, {
+            initialCountry: "pe",
+            separateDialCode: true,
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
+        });
 
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        dropZone.onclick = () => fileInput.click();
-        fileInput.onchange = (e) => {
-            if(e.target.files.length) document.getElementById('fileName').innerText = e.target.files[0].name;
-        };
-
-        // 2. Formateador de Números (Lógica Perú)
-        function cleanPhone(num) {
-            let p = num.toString().replace(/\D/g, '');
-            if(p.length === 9 && p.startsWith('9')) p = '51' + p;
-            return p;
-        }
-
-        // 3. Ejecución Principal
-        async function executeCampaign() {
-            const btn = document.getElementById('sendBtn');
-            const single = document.getElementById('singlePhone').value;
-            const file = fileInput.files[0];
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('ind-target').classList.toggle('hidden', mode !== 'individual');
+            document.getElementById('bulk-target').classList.toggle('hidden', mode === 'individual');
             
-            let contacts = [];
-            btn.disabled = true;
+            document.getElementById('btn-mode-ind').classList.toggle('type-active', mode === 'individual');
+            document.getElementById('btn-mode-bulk').classList.toggle('type-active', mode === 'bulk');
+            
+            document.getElementById('btn-mode-ind').style.opacity = mode === 'individual' ? '1' : '0.5';
+            document.getElementById('btn-mode-bulk').style.opacity = mode === 'bulk' ? '1' : '0.5';
+        }
 
-            // Procesar contactos
-            if(single.trim() !== "") {
-                contacts.push({ phone: cleanPhone(single), name: "Cliente" });
-            } else if(file) {
-                const data = await file.arrayBuffer();
-                const wb = XLSX.read(data);
-                const ws = wb.Sheets[wb.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(ws);
-                contacts = json.map(r => ({
-                    phone: cleanPhone(r.phone || r.telefono || r.Telefono || r.Phone || ''),
-                    name: r.name || r.nombre || r.Nombre || r.Name || 'Cliente'
-                })).filter(c => c.phone !== '');
+        function toggleContentFields() {
+            const type = document.getElementById('msgType').value;
+            document.getElementById('group-template').classList.toggle('hidden', type !== 'template');
+            document.getElementById('group-text').classList.toggle('hidden', type === 'template' && type !== 'text');
+            
+            // Lógica para mostrar URL de media
+            const isMedia = ['image', 'document', 'audio'].includes(type);
+            document.getElementById('group-media').classList.toggle('hidden', !isMedia);
+            document.getElementById('group-text').classList.toggle('hidden', type === 'template');
+        }
+
+        async function initProcess() {
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            let contacts = [];
+
+            if (currentMode === 'individual') {
+                const fullNumber = iti.getNumber();
+                if (!iti.isValidNumber()) {
+                    alert("⚠️ Número internacional inválido. Revisa la bandera y los dígitos.");
+                    btn.disabled = false;
+                    return;
+                }
+                contacts.push({ phone: fullNumber.replace('+', ''), name: 'Cliente' });
             } else {
-                btn.disabled = false;
-                return alert("⚠️ Ingresa un número o carga un Excel.");
+                // Lógica Excel (ya robustecida en versiones anteriores)
+                const file = document.getElementById('file').files[0];
+                if (!file) { alert("⚠️ Carga un archivo Excel."); btn.disabled = false; return; }
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data);
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                contacts = json.map(r => ({
+                    phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
+                    name: r.name || r.nombre || 'Cliente'
+                })).filter(c => c.phone.length > 5);
             }
 
-            document.getElementById('logContainer').innerHTML = '';
-            let ok = 0, err = 0;
+            document.getElementById('logs').innerHTML = '';
+            let ok = 0;
 
-            for(let c of contacts) {
-                addLogEntry(c.phone, 'Iniciando...');
+            for (let c of contacts) {
+                renderLog(c.phone, 'Sincronizando con NXCloud...', 'waiting');
                 
                 try {
+                    const payload = {
+                        to: c.phone,
+                        type: document.getElementById('msgType').value,
+                        templateName: document.getElementById('tplName').value,
+                        message: document.getElementById('body').value.replace('{{name}}', c.name),
+                        mediaUrl: document.getElementById('mediaUrl').value,
+                        components: [{ type: "body", parameters: [{ type: "text", text: c.name }] }]
+                    };
+
                     const res = await fetch(WORKER_URL, {
                         method: 'POST',
-                        body: JSON.stringify({
-                            to: c.phone,
-                            type: document.getElementById('msgType').value,
-                            templateName: document.getElementById('tplName').value,
-                            message: document.getElementById('msgBody').value.replace('{{name}}', c.name),
-                            components: [{ type: "body", parameters: [{ type: "text", text: c.name }] }]
-                        })
+                        body: JSON.stringify(payload)
                     });
 
-                    const data = await res.json();
-                    if(res.ok && data.code === 0) {
+                    const result = await res.json();
+                    
+                    if (res.ok && result.code === 0) {
                         ok++;
-                        updateLogEntry(c.phone, 'Entregado', 'success', 'bi-check2-all');
+                        updateLog(c.phone, 'Transmitido con éxito', 'success', 'bi-check2-circle');
                     } else {
-                        err++;
-                        updateLogEntry(c.phone, data.message || 'Bloqueado por política', 'error', 'bi-shield-exclamation');
+                        updateLog(c.phone, result.message || 'Bloqueado por reglas de Meta (24h)', 'error', 'bi-shield-exclamation');
                     }
                 } catch (e) {
-                    err++;
-                    updateLogEntry(c.phone, 'Fallo de conexión', 'error', 'bi-wifi-off');
+                    updateLog(c.phone, 'Error de infraestructura', 'error', 'bi-wifi-off');
                 }
-                document.getElementById('stats').innerText = `ÉXITOS: ${ok} | ERRORES: ${err}`;
+                document.getElementById('counter').innerText = `EXECUTED: ${ok}/${contacts.length}`;
             }
             btn.disabled = false;
         }
 
-        function addLogEntry(phone, msg) {
-            const container = document.getElementById('logContainer');
+        function renderLog(phone, msg, status) {
+            const container = document.getElementById('logs');
             const div = document.createElement('div');
-            div.id = `row-${phone}`;
-            div.className = 'glass-card p-4 flex justify-between items-center border-l-4 border-slate-700 animate-pulse';
+            div.id = `log-${phone}`;
+            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse';
             div.innerHTML = `
-                <div>
-                    <p class="text-[10px] font-black text-blue-400 tracking-widest">${phone}</p>
-                    <p id="msg-${phone}" class="text-[11px] text-slate-400 mt-1">${msg}</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">
+                        ${phone.slice(-4)}
+                    </div>
+                    <div>
+                        <p class="text-xs font-black tracking-tighter text-white">+${phone}</p>
+                        <p id="txt-${phone}" class="text-[10px] text-slate-500 font-mono mt-1 uppercase">${msg}</p>
+                    </div>
                 </div>
-                <div id="badge-${phone}" class="status-badge status-waiting">Procesando</div>
+                <div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>
             `;
             container.prepend(div);
         }
 
-        function updateLogEntry(phone, msg, type, icon) {
+        function updateLog(phone, msg, status, icon) {
+            const row = document.getElementById(`log-${phone}`);
             const badge = document.getElementById(`badge-${phone}`);
-            const text = document.getElementById(`msg-${phone}`);
-            const card = document.getElementById(`row-${phone}`);
-            card.classList.remove('animate-pulse');
-            card.style.borderLeftColor = type === 'success' ? '#10b981' : '#ef4444';
-            badge.className = `status-badge status-${type}`;
-            badge.innerHTML = `<i class="bi ${icon}"></i> ${type === 'success' ? 'OK' : 'FAIL'}`;
+            const text = document.getElementById(`txt-${phone}`);
+            
+            row.classList.remove('animate-pulse');
+            row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
+            badge.className = `status-pill status-${status}`;
+            badge.innerHTML = `<i class="bi ${icon} mr-1"></i> ${status.toUpperCase()}`;
             text.innerText = msg;
-            if(type === 'error') text.classList.add('text-red-400', 'font-bold');
+            if (status === 'error') text.classList.add('text-red-400', 'font-bold');
         }
+
+        // Manejo de nombre de archivo
+        document.getElementById('file').onchange = (e) => {
+            if(e.target.files.length) document.getElementById('file-name').innerText = e.target.files[0].name;
+        };
     </script>
 </body>
 </html>
