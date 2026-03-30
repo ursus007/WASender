@@ -232,27 +232,30 @@ async function initProcess() {
     const selectedType = document.getElementById('msgType').value;
     btn.disabled = true;
     
-    // ... (Lógica de obtención de contactos que ya tienes) ...
+    // ... (Lógica de contactos) ...
 
     for (let c of contacts) {
-        renderLog(c.phone, 'Sincronizando con NXCloud...', 'waiting');
+        renderLog(c.phone, 'Sincronizando...', 'waiting');
         
         try {
-            // CONFIGURACIÓN DINÁMICA DEL PAYLOAD
+            // CONSTRUCCIÓN DEL PAYLOAD SEGÚN EL TIPO SELECCIONADO
             let payload = {
                 to: c.phone,
-                type: selectedType === 'template_cta3' ? 'template' : selectedType,
-                templateName: selectedType === 'template_cta3' ? 'cta_3' : document.getElementById('tplName').value,
-                // Si es cta_3, enviamos la variable nombre del Excel/Input
-                components: [{ 
-                    type: "body", 
-                    parameters: [{ type: "text", text: c.name }] 
-                }]
+                // Si seleccionaste la opción de cta_3, forzamos el tipo 'template'
+                type: selectedType.startsWith('template') ? 'template' : selectedType
             };
 
-            // Si es mensaje de texto de sesión, añadimos el body
-            if(selectedType === 'text') {
+            if (selectedType === 'template_cta3') {
+                payload.templateName = 'cta_3';
+                payload.components = [{ 
+                    type: "body", 
+                    parameters: [{ type: "text", text: c.name }] 
+                }];
+            } else if (selectedType === 'text') {
                 payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
+            } else {
+                // Para imágenes o documentos de sesión
+                payload.mediaUrl = document.getElementById('mediaUrl').value;
             }
 
             const res = await fetch(WORKER_URL, {
@@ -264,13 +267,13 @@ async function initProcess() {
             const result = await res.json();
             
             if (res.ok && result.code === 0) {
-                updateLog(c.phone, 'Transmitido con éxito', 'success', 'bi-check2-circle');
+                updateLog(c.phone, 'Plantilla enviada (Ventana abierta)', 'success', 'bi-check2-all');
             } else {
-                // Capturamos el error de baneo o falta de sesión
-                updateLog(c.phone, result.message || 'Error de Ventana 24h', 'error', 'bi-shield-exclamation');
+                // Aquí es donde sale el mensaje de BLOQUEO DE ENVÍO que viste
+                updateLog(c.phone, result.message, 'error', 'bi-shield-exclamation');
             }
         } catch (e) {
-            updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off');
+            updateLog(c.phone, 'Error de conexión', 'error', 'bi-wifi-off');
         }
     }
     btn.disabled = false;
