@@ -12,6 +12,49 @@
 </head>
 <body class="bg-slate-100 font-sans">
 
+<div class="card shadow-sm p-4 mb-4">
+    <h3 class="text-primary mb-3"><i class="bi bi-whatsapp"></i> Campaign Manager - NXCloud</h3>
+    
+    <div class="row">
+        <div class="col-md-6 border-end">
+            <label class="form-label fw-bold">1. Cargar Base de Datos (CSV)</label>
+            <input type="file" id="csvFile" class="form-control mb-3" accept=".csv">
+            
+            <label class="form-label fw-bold">2. Tipo de Mensaje</label>
+            <select id="msgType" class="form-select mb-3" onchange="toggleFields()">
+                <option value="template">Template (Inicio de Conversación)</option>
+                <option value="text">Texto Simple (Solo Ventana de Sesión)</option>
+                <option value="image">Imagen / Media (Solo Ventana de Sesión)</option>
+                <option value="interactive">Botones Interactivos (Solo Ventana de Sesión)</option>
+            </select>
+            
+            <div id="statusAlert" class="alert alert-warning d-none">
+                <i class="bi bi-exclamation-triangle"></i> 
+                Este tipo de mensaje solo llegará si el cliente respondió en las últimas 24h.
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div id="templateFields">
+                <label class="form-label fw-bold">Nombre del Template</label>
+                <input type="text" id="tplName" class="form-control mb-2" placeholder="ej: hello_world">
+                <label class="form-label fw-bold">Idioma</label>
+                <input type="text" id="tplLang" class="form-control mb-2" value="es">
+            </div>
+
+            <div id="contentFields" class="d-none">
+                <label class="form-label fw-bold">Mensaje / Caption</label>
+                <textarea id="msgBody" class="form-control" rows="4"></textarea>
+            </div>
+            
+            <button onclick="startMassiveSend()" class="btn btn-success w-100 mt-4 py-2 fw-bold">
+                <i class="bi bi-send-fill"></i> INICIAR ENVÍO MASIVO
+            </button>
+        </div>
+    </div>
+</div>
+
+    
     <div class="min-h-screen flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
             <div class="mb-8 text-center">
