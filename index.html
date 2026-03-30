@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXAI | Enterprise WhatsApp Suite</title>
+    <title>NXAI | Global Messaging Engine</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/css/intlTelInput.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,177 +14,66 @@
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            min-height: 100vh;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            border-color: #38bdf8;
-            background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .gradient-btn {
-            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        /* Phone Input Styling Overrides */
+        body { font-family: 'Outfit', sans-serif; background: #0f172a; color: #f8fafc; min-height: 100vh; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
         .iti { width: 100%; }
-        .iti__country-list { background-color: #1e293b; border: 1px solid #334155; color: white; }
-        .iti__country:hover { background-color: #334155; }
-        
-        input, select, textarea {
-            background: rgba(15, 23, 42, 0.8) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border-radius: 14px !important;
-        }
-
-        .status-pill {
-            padding: 2px 10px;
-            border-radius: 99px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-        }
-
-        .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
-        
-        /* Custom scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .iti__country-list { background: #1e293b; color: white; border: 1px solid #334155; }
+        input, select, textarea { background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; border-radius: 12px !important; }
+        .btn-nx { background: linear-gradient(135deg, #0ea5e9, #6366f1); transition: 0.3s; }
+        .btn-nx:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; }
+        .success { background: #065f46; color: #34d399; }
+        .error { background: #7f1d1d; color: #f87171; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-            <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                    <span class="text-blue-600 font-black text-3xl">NX</span>
-                </div>
-                <div>
-                    <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">AI</span></h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Global Messaging Core</p>
-                </div>
-            </div>
-            
-            <div class="flex gap-4 items-center glass-card px-6 py-3">
-                <div class="text-right">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase">Balance Global</p>
-                    <p class="text-white font-mono text-lg">$ --.--</p>
-                </div>
-                <div class="h-8 w-[1px] bg-slate-700"></div>
-                <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span> API CONNECTED
-                </div>
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-extrabold italic">NX<span class="text-blue-400">AI</span> <span class="text-sm font-light not-italic text-slate-500 uppercase ml-2 tracking-widest">v2.0 Global</span></h1>
+            <div class="text-green-400 text-xs font-bold flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-ping"></span> SISTEMA ACTIVO
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <div class="lg:col-span-5 space-y-6">
-                <div class="glass-card p-8">
-                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="bi bi-person-plus-fill"></i> 01. Destino y Estrategia
-                    </h2>
-
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center border-blue-500 type-active">
-                            <i class="bi bi-phone text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Individual</span>
-                        </button>
-                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-4 text-center opacity-50">
-                            <i class="bi bi-layers text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Masivo (Excel)</span>
+            <div class="glass p-8">
+                <div class="mb-6">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Destinatario</label>
+                    <div class="flex flex-col gap-4">
+                        <input type="tel" id="phoneInput" class="w-full p-4">
+                        <div class="text-center text-slate-600 text-[10px] font-bold">O CARGAR BASE MASIVA</div>
+                        <input type="file" id="excelInput" class="hidden" accept=".xlsx, .xls, .csv">
+                        <button onclick="document.getElementById('excelInput').click()" id="fileStatus" class="w-full p-3 border-2 border-dashed border-slate-700 rounded-xl text-xs text-slate-400">
+                            <i class="bi bi-file-earmark-excel mr-2"></i> Click para subir Excel
                         </button>
                     </div>
-
-                    <div id="ind-target" class="mb-6 animate-fade-in">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Número Internacional</label>
-                        <input type="tel" id="phone" class="w-full p-4">
-                    </div>
-
-                    <div id="bulk-target" class="mb-6 hidden">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Base de Datos (.xlsx / .csv)</label>
-                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center hover:border-blue-500 cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
-                            <input type="file" id="file" class="hidden" accept=".xlsx, .xls, .csv">
-                            <i class="bi bi-cloud-upload text-2xl text-slate-500 mb-2 block"></i>
-                            <p id="file-name" class="text-xs text-slate-400 italic font-mono">Click para cargar</p>
-                        </div>
-                    </div>
-
-                    <div class="h-[1px] bg-slate-800 my-8"></div>
-
-                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="bi bi-chat-left-dots-fill"></i> 02. Tipo de Contenido
-                    </h2>
-
-<select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-    <optgroup label="Apertura (Fuera de ventana)">
-        <option value="template_cta3">🚀 Plantilla: cta_3 (1 Variable)</option>
-        <option value="template">📝 Otra Plantilla (Manual)</option>
-    </optgroup>
-    <optgroup label="Sesión (Dentro de ventana)">
-        <option value="text">💬 Mensaje de Texto</option>
-        <option value="image">🖼️ Imagen / Fotografía</option>
-        <option value="document">📄 Documento PDF</option>
-    </optgroup>
-</select>
-
-                    <div id="content-fields" class="space-y-4">
-                        <div id="group-template">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre de la Plantilla en Meta</label>
-                            <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: bienvenida_premium">
-                        </div>
-                        
-                        <div id="group-text" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Cuerpo del Mensaje</label>
-                            <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}} para variables"></textarea>
-                        </div>
-
-                        <div id="group-media" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Enlace del Archivo (URL Pública)</label>
-                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://miweb.com/archivo.pdf">
-                        </div>
-                    </div>
-
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all hover:scale-[1.02]">
-                        <i class="bi bi-lightning-fill mr-2"></i> Transmitir Mensaje
-                    </button>
                 </div>
+
+                <div class="mb-6">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Tipo de Envío</label>
+                    <select id="msgType" class="w-full p-4 text-sm font-bold" onchange="toggleUI()">
+                        <option value="template_cta3">🚀 PLANTILLA: cta_3 (Apertura)</option>
+                        <option value="text">💬 TEXTO LIBRE (Solo si hay sesión)</option>
+                        <option value="image">🖼️ IMAGEN (Solo si hay sesión)</option>
+                    </select>
+                </div>
+
+                <div id="textFields" class="hidden mb-6">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Mensaje o URL</label>
+                    <textarea id="msgBody" rows="3" class="w-full p-4 text-sm" placeholder="Escribe aquí o pega URL..."></textarea>
+                </div>
+
+                <button id="sendBtn" onclick="processAll()" class="w-full btn-nx py-5 rounded-2xl font-black text-sm uppercase tracking-widest mt-4">
+                    Iniciar Transmisión
+                </button>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="glass-card p-8 h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
-                            <i class="bi bi-gpu-card"></i> Process Engine Status
-                        </h2>
-                        <div id="counter" class="font-mono text-xs text-slate-500">READY</div>
-                    </div>
-
-                    <div id="logs" class="flex-grow space-y-4 overflow-y-auto max-h-[650px] pr-4 custom-scroll">
-                        <div class="text-center py-20 opacity-20 italic">
-                            <i class="bi bi-terminal-x text-6xl block mb-4"></i>
-                            <p class="font-mono text-sm">Esperando parámetros de envío...</p>
-                        </div>
-                    </div>
+            <div class="glass p-8 overflow-hidden flex flex-col h-[600px]">
+                <h2 class="text-xs font-black text-slate-500 uppercase mb-4 tracking-tighter">Log de Envío en Tiempo Real</h2>
+                <div id="logBox" class="flex-grow overflow-y-auto space-y-3 pr-2 custom-scroll">
+                    <div class="text-center opacity-20 py-20 italic text-sm">Esperando acción...</div>
                 </div>
             </div>
         </div>
@@ -193,129 +81,113 @@
 
     <script>
         const WORKER_URL = 'https://nxlink-backend.ursus006.workers.dev';
-        let currentMode = 'individual';
         let iti;
 
-        // Inicializar Flags Internacionales
-        const input = document.querySelector("#phone");
-        iti = window.intlTelInput(input, {
-            initialCountry: "pe",
-            separateDialCode: true,
-            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
-        });
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('ind-target').classList.toggle('hidden', mode !== 'individual');
-            document.getElementById('bulk-target').classList.toggle('hidden', mode === 'individual');
-            
-            document.getElementById('btn-mode-ind').classList.toggle('type-active', mode === 'individual');
-            document.getElementById('btn-mode-bulk').classList.toggle('type-active', mode === 'bulk');
-            
-            document.getElementById('btn-mode-ind').style.opacity = mode === 'individual' ? '1' : '0.5';
-            document.getElementById('btn-mode-bulk').style.opacity = mode === 'bulk' ? '1' : '0.5';
-        }
-
-        function toggleContentFields() {
-            const type = document.getElementById('msgType').value;
-            document.getElementById('group-template').classList.toggle('hidden', type !== 'template');
-            document.getElementById('group-text').classList.toggle('hidden', type === 'template' && type !== 'text');
-            
-            // Lógica para mostrar URL de media
-            const isMedia = ['image', 'document', 'audio'].includes(type);
-            document.getElementById('group-media').classList.toggle('hidden', !isMedia);
-            document.getElementById('group-text').classList.toggle('hidden', type === 'template');
-        }
-
-async function initProcess() {
-    const btn = document.getElementById('sendBtn');
-    const selectedType = document.getElementById('msgType').value;
-    btn.disabled = true;
-    
-    // ... (Lógica de contactos) ...
-
-    for (let c of contacts) {
-        renderLog(c.phone, 'Sincronizando...', 'waiting');
-        
-        try {
-            // CONSTRUCCIÓN DEL PAYLOAD SEGÚN EL TIPO SELECCIONADO
-            let payload = {
-                to: c.phone,
-                // Si seleccionaste la opción de cta_3, forzamos el tipo 'template'
-                type: selectedType.startsWith('template') ? 'template' : selectedType
-            };
-
-            if (selectedType === 'template_cta3') {
-                payload.templateName = 'cta_3';
-                payload.components = [{ 
-                    type: "body", 
-                    parameters: [{ type: "text", text: c.name }] 
-                }];
-            } else if (selectedType === 'text') {
-                payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
-            } else {
-                // Para imágenes o documentos de sesión
-                payload.mediaUrl = document.getElementById('mediaUrl').value;
-            }
-
-            const res = await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+        // Inicializar Banderas
+        window.onload = () => {
+            const input = document.querySelector("#phoneInput");
+            iti = window.intlTelInput(input, {
+                initialCountry: "pe",
+                separateDialCode: true,
+                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
             });
+        };
 
-            const result = await res.json();
+        // Mostrar/Ocultar campos según el tipo
+        function toggleUI() {
+            const type = document.getElementById('msgType').value;
+            document.getElementById('textFields').classList.toggle('hidden', type === 'template_cta3');
+        }
+
+        // Actualizar nombre del archivo
+        document.getElementById('excelInput').onchange = (e) => {
+            if(e.target.files.length) document.getElementById('fileStatus').innerText = "✅ " + e.target.files[0].name;
+        };
+
+        async function processAll() {
+            const btn = document.getElementById('sendBtn');
+            const logBox = document.getElementById('logBox');
+            const excelFile = document.getElementById('excelInput').files[0];
+            const singlePhone = iti.getNumber();
             
-            if (res.ok && result.code === 0) {
-                updateLog(c.phone, 'Plantilla enviada (Ventana abierta)', 'success', 'bi-check2-all');
+            let queue = [];
+            btn.disabled = true;
+            logBox.innerHTML = '';
+
+            // 1. Determinar lista de contactos
+            if (singlePhone && iti.isValidNumber()) {
+                queue.push({ phone: singlePhone.replace('+', ''), name: 'Cliente' });
+            } else if (excelFile) {
+                const data = await excelFile.arrayBuffer();
+                const wb = XLSX.read(data);
+                const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                queue = json.map(r => ({
+                    phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
+                    name: r.name || r.nombre || 'Cliente'
+                })).filter(q => q.phone.length > 6);
             } else {
-                // Aquí es donde sale el mensaje de BLOQUEO DE ENVÍO que viste
-                updateLog(c.phone, result.message, 'error', 'bi-shield-exclamation');
+                alert("⚠️ Ingresa un número válido o sube un Excel.");
+                btn.disabled = false;
+                return;
             }
-        } catch (e) {
-            updateLog(c.phone, 'Error de conexión', 'error', 'bi-wifi-off');
-        }
-    }
-    btn.disabled = false;
-}
 
-        function renderLog(phone, msg, status) {
-            const container = document.getElementById('logs');
+            // 2. Procesar Envío
+            for (let c of queue) {
+                const rowId = `row-${c.phone}`;
+                addLogRow(rowId, c.phone, 'Sincronizando...');
+
+                try {
+                    const selectedType = document.getElementById('msgType').value;
+                    
+                    // PAYLOAD INTELIGENTE (LA CLAVE)
+                    let payload = { to: c.phone };
+
+                    if (selectedType === 'template_cta3') {
+                        payload.type = "template"; // Forzamos tipo template para evitar el bloqueo del Worker
+                        payload.templateName = "cta_3";
+                        payload.components = [{ type: "body", parameters: [{ type: "text", text: c.name }] }];
+                    } else {
+                        payload.type = selectedType;
+                        if (selectedType === 'text') payload.message = document.getElementById('msgBody').value.replace('{{name}}', c.name);
+                        else payload.mediaUrl = document.getElementById('msgBody').value;
+                    }
+
+                    const res = await fetch(WORKER_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.code === 0) {
+                        updateLogRow(rowId, 'Entregado con éxito', 'success');
+                    } else {
+                        updateLogRow(rowId, data.message || 'Error de política', 'error');
+                    }
+                } catch (e) {
+                    updateLogRow(rowId, 'Fallo de conexión', 'error');
+                }
+            }
+            btn.disabled = false;
+        }
+
+        function addLogRow(id, phone, msg) {
             const div = document.createElement('div');
-            div.id = `log-${phone}`;
-            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse';
-            div.innerHTML = `
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">
-                        ${phone.slice(-4)}
-                    </div>
-                    <div>
-                        <p class="text-xs font-black tracking-tighter text-white">+${phone}</p>
-                        <p id="txt-${phone}" class="text-[10px] text-slate-500 font-mono mt-1 uppercase">${msg}</p>
-                    </div>
-                </div>
-                <div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>
-            `;
-            container.prepend(div);
+            div.id = id;
+            div.className = 'p-4 glass flex justify-between items-center animate-pulse border-l-4 border-blue-500';
+            div.innerHTML = `<div><p class="text-xs font-bold">+${phone}</p><p class="text-[10px] text-slate-500 msg-txt">${msg}</p></div><div class="status-badge bg-slate-800">Procesando</div>`;
+            document.getElementById('logBox').prepend(div);
         }
 
-        function updateLog(phone, msg, status, icon) {
-            const row = document.getElementById(`log-${phone}`);
-            const badge = document.getElementById(`badge-${phone}`);
-            const text = document.getElementById(`txt-${phone}`);
-            
+        function updateLogRow(id, msg, status) {
+            const row = document.getElementById(id);
             row.classList.remove('animate-pulse');
             row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
-            badge.className = `status-pill status-${status}`;
-            badge.innerHTML = `<i class="bi ${icon} mr-1"></i> ${status.toUpperCase()}`;
-            text.innerText = msg;
-            if (status === 'error') text.classList.add('text-red-400', 'font-bold');
+            row.querySelector('.msg-txt').innerText = msg;
+            const badge = row.querySelector('.status-badge');
+            badge.className = `status-badge ${status}`;
+            badge.innerText = status === 'success' ? 'ENVIADO' : 'FALLIDO';
         }
-
-        // Manejo de nombre de archivo
-        document.getElementById('file').onchange = (e) => {
-            if(e.target.files.length) document.getElementById('file-name').innerText = e.target.files[0].name;
-        };
     </script>
 </body>
 </html>
