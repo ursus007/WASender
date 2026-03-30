@@ -3,81 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXLink - WhatsApp Sender</title>
+    <title>NXLink - WhatsApp Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
+    <style>
+        .iti { width: 100%; }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-slate-100 font-sans">
 
-    <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
             <div class="mb-8 text-center">
-                <h1 class="text-2xl font-bold text-gray-800">NXLink Gateway</h1>
-                <p class="text-gray-500 text-sm">Envío de plantillas individuales</p>
+                <div class="inline-block p-3 bg-blue-100 rounded-full mb-3">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">NXLink Demo</h1>
+                <p class="text-gray-500">Envío masivo y unitario de WhatsApp</p>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Número de destino</label>
-                    <input type="text" id="phone" placeholder="Ej: 51939579468" 
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Destinatario</label>
+                    <input type="tel" id="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Mensaje (Body)</label>
-                    <textarea id="message" rows="3" placeholder="Escribe tu mensaje aquí..."
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none transition">demo NXAAI Peru</textarea>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Mensaje Personalizado</label>
+                    <textarea id="message" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">demo NXAAI Peru</textarea>
                 </div>
 
-                <button onclick="sendTemplate()" id="sendBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 flex justify-center items-center">
-                    Enviar WhatsApp
+                <button onclick="sendTemplate()" id="sendBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition-all active:scale-95">
+                    Enviar Ahora
                 </button>
             </div>
 
-            <div id="status" class="mt-6 hidden p-4 rounded-md text-sm text-center"></div>
+            <div id="status" class="mt-6 hidden p-4 rounded-lg text-sm font-medium text-center"></div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
     <script>
+        // Inicializar la detección de país
+        const input = document.querySelector("#phone");
+        const iti = window.intlTelInput(input, {
+            initialCountry: "auto",
+            geoIpLookup: callback => {
+                fetch("https://ipapi.co/json")
+                    .then(res => res.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback("pe")); // Default Perú
+            },
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/utils.js",
+            onlyCountries: ["pe", "mx"], // Solo Perú y México para tu demo
+            separateDialCode: true
+        });
+
         async function sendTemplate() {
             const btn = document.getElementById('sendBtn');
             const status = document.getElementById('status');
-            const phone = document.getElementById('phone').value;
+            
+            // Obtener el número completo con el código de país (ej: 51939579468)
+            const fullNumber = iti.getNumber().replace('+', ''); 
             const message = document.getElementById('message').value;
 
-            if (!phone) {
-                alert("Por favor ingresa un número");
+            if (!iti.isValidNumber()) {
+                alert("Número no válido para el país seleccionado");
                 return;
             }
 
-            // UI State
             btn.disabled = true;
-            btn.innerText = "Enviando...";
+            btn.innerText = "Procesando...";
             status.classList.add('hidden');
 
             try {
                 const response = await fetch('https://nxlink-backend.ursus006.workers.dev', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ to: phone, message: message })
+                    body: JSON.stringify({ to: fullNumber, message: message })
                 });
 
                 const data = await response.json();
 
                 status.classList.remove('hidden');
-                if (data.code === "0" || data.result === "success" || response.ok) {
-                    status.className = "mt-6 p-4 rounded-md text-sm text-center bg-green-100 text-green-800";
-                    status.innerText = "¡Mensaje enviado con éxito!";
+                if (data.code === "0" || response.ok) {
+                    status.className = "mt-6 p-4 rounded-lg text-sm text-center bg-green-50 text-green-700 border border-green-200";
+                    status.innerText = "✓ Mensaje enviado correctamente";
                 } else {
-                    throw new Error(data.msg || "Error en el envío");
+                    throw new Error(data.msg || "Error en el servidor");
                 }
             } catch (error) {
                 status.classList.remove('hidden');
-                status.className = "mt-6 p-4 rounded-md text-sm text-center bg-red-100 text-red-800";
-                status.innerText = "Error: " + error.message;
+                status.className = "mt-6 p-4 rounded-lg text-sm text-center bg-red-50 text-red-700 border border-red-200";
+                status.innerText = "✕ Error: " + error.message;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Enviar WhatsApp";
+                btn.innerText = "Enviar Ahora";
             }
         }
     </script>
