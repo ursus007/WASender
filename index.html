@@ -136,17 +136,17 @@
                         <i class="bi bi-chat-left-dots-fill"></i> 02. Tipo de Contenido
                     </h2>
 
-                    <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Apertura (Fuera de ventana)">
-                            <option value="template">🚀 HSM Template (Certificado)</option>
-                        </optgroup>
-                        <optgroup label="Sesión (Dentro de ventana)">
-                            <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image">🖼️ Imagen / Fotografía</option>
-                            <option value="document">📄 Documento PDF / Excel</option>
-                            <option value="audio">🎙️ Nota de Voz / Audio</option>
-                        </optgroup>
-                    </select>
+<select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
+    <optgroup label="Apertura (Fuera de ventana)">
+        <option value="template_cta3">🚀 Plantilla: cta_3 (1 Variable)</option>
+        <option value="template">📝 Otra Plantilla (Manual)</option>
+    </optgroup>
+    <optgroup label="Sesión (Dentro de ventana)">
+        <option value="text">💬 Mensaje de Texto</option>
+        <option value="image">🖼️ Imagen / Fotografía</option>
+        <option value="document">📄 Documento PDF</option>
+    </optgroup>
+</select>
 
                     <div id="content-fields" class="space-y-4">
                         <div id="group-template">
