@@ -7,7 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/css/intlTelInput.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -57,7 +56,6 @@
             border-radius: 99px;
             font-size: 0.65rem;
             font-weight: 800;
-            letter-spacing: 0.05em;
         }
 
         .status-waiting { background: #334155; color: #94a3b8; }
@@ -65,7 +63,6 @@
         .status-error { background: #7f1d1d; color: #f87171; }
 
         .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
-        
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
@@ -83,7 +80,6 @@
                     <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Global Messaging Core</p>
                 </div>
             </div>
-            
             <div class="flex gap-4 items-center glass-card px-6 py-3">
                 <div class="text-right">
                     <p class="text-[10px] text-slate-500 font-bold uppercase">Balance Global</p>
@@ -100,7 +96,6 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
             <div class="lg:col-span-5 space-y-6">
                 <div class="glass-card p-8">
                     <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
@@ -108,7 +103,7 @@
                     </h2>
 
                     <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center border-blue-500 type-active">
+                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center type-active">
                             <i class="bi bi-phone text-2xl mb-1 block"></i>
                             <span class="text-[10px] font-bold uppercase">Individual</span>
                         </button>
@@ -140,7 +135,7 @@
 
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
                         <optgroup label="Apertura (Fuera de ventana)">
-                            <option value="template_cta3">🚀 Plantilla: cta_3 (1 Variable)</option>
+                            <option value="template_main">🚀 Plantilla: vyv_1 (Prueba)</option>
                             <option value="template">📝 Otra Plantilla (Manual)</option>
                         </optgroup>
                         <optgroup label="Sesión (Dentro de ventana)">
@@ -155,14 +150,12 @@
                             <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre de la Plantilla en Meta</label>
                             <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: bienvenida_premium">
                         </div>
-                        
                         <div id="group-text" class="hidden">
                             <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Cuerpo del Mensaje</label>
-                            <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}} para variables"></textarea>
+                            <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}}"></textarea>
                         </div>
-
                         <div id="group-media" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Enlace del Archivo (URL Pública)</label>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">URL del Archivo</label>
                             <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://miweb.com/archivo.pdf">
                         </div>
                     </div>
@@ -181,11 +174,10 @@
                         </h2>
                         <div id="counter" class="font-mono text-xs text-slate-500">READY</div>
                     </div>
-
                     <div id="logs" class="flex-grow space-y-4 overflow-y-auto max-h-[650px] pr-4 custom-scroll">
                         <div class="text-center py-20 opacity-20 italic">
                             <i class="bi bi-terminal-x text-6xl block mb-4"></i>
-                            <p class="font-mono text-sm">Esperando parámetros de envío...</p>
+                            <p class="font-mono text-sm">Esperando parámetros...</p>
                         </div>
                     </div>
                 </div>
@@ -198,12 +190,14 @@
         let currentMode = 'individual';
         let iti;
 
-        const input = document.querySelector("#phone");
-        iti = window.intlTelInput(input, {
-            initialCountry: "pe",
-            separateDialCode: true,
-            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
-        });
+        window.onload = () => {
+            const input = document.querySelector("#phone");
+            iti = window.intlTelInput(input, {
+                initialCountry: "pe",
+                separateDialCode: true,
+                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
+            });
+        };
 
         function setMode(mode) {
             currentMode = mode;
@@ -219,7 +213,6 @@
             const type = document.getElementById('msgType').value;
             const isTemplate = type.startsWith('template');
             const isMedia = ['image', 'document'].includes(type);
-            
             document.getElementById('group-template').classList.toggle('hidden', type !== 'template');
             document.getElementById('group-text').classList.toggle('hidden', isTemplate || isMedia);
             document.getElementById('group-media').classList.toggle('hidden', !isMedia);
@@ -231,7 +224,6 @@
             btn.disabled = true;
             let contacts = [];
 
-            // 1. Obtener contactos
             if (currentMode === 'individual') {
                 const fullNumber = iti.getNumber();
                 if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
@@ -254,14 +246,13 @@
             for (let c of contacts) {
                 renderLog(c.phone, 'Sincronizando...', 'waiting');
                 try {
-                    // CORRECCIÓN PAYLOAD: Forzar 'template' para saltar bloqueo del Worker
                     let payload = { 
                         to: c.phone,
                         type: selectedType.startsWith('template') ? 'template' : selectedType 
                     };
 
-                    if (selectedType === 'template_cta3') {
-                        payload.templateName = 'cta_3';
+                    if (selectedType === 'template_main') {
+                        payload.templateName = 'vyv_1'; // Cambiado a vyv_1 según tu solicitud
                         payload.components = [{ type: "body", parameters: [{ type: "text", text: c.name }] }];
                     } else if (selectedType === 'template') {
                         payload.templateName = document.getElementById('tplName').value;
