@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXAI | Enterprise WhatsApp Suite</title>
+    <title>NXAI | Pro Messaging Suite</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -14,168 +14,89 @@
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            min-height: 100vh;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            border-color: #38bdf8;
-            background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .gradient-btn {
-            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
+        body { font-family: 'Outfit', sans-serif; background: #0f172a; color: #f8fafc; min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
+        .gradient-btn { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); }
         .iti { width: 100%; }
-        .iti__country-list { background-color: #1e293b; border: 1px solid #334155; color: white; }
-        input, select, textarea {
-            background: rgba(15, 23, 42, 0.8) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border-radius: 14px !important;
-        }
-        .status-pill { padding: 2px 10px; border-radius: 99px; font-size: 0.65rem; font-weight: 800; }
-        .status-waiting { background: #334155; color: #94a3b8; }
-        .status-success { background: #065f46; color: #34d399; }
-        .status-error { background: #7f1d1d; color: #f87171; }
-        .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        input, select, textarea { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; border-radius: 12px !important; }
+        
+        /* WhatsApp Preview Styles */
+        .wa-bubble { background: #075e54; border-radius: 0 15px 15px 15px; position: relative; max-width: 280px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .wa-header { background: #128c7e; border-radius: 15px 15px 0 0; padding: 10px; font-size: 11px; font-weight: bold; }
+        .wa-body { padding: 12px; font-size: 13px; line-height: 1.4; background: #dcf8c6; color: #333; border-radius: 0 0 15px 15px; }
+        .wa-variable { color: #0ea5e9; font-weight: bold; background: rgba(14, 165, 233, 0.1); padding: 0 2px; }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-8">
+
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-            <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                    <span class="text-blue-600 font-black text-3xl">NX</span>
-                </div>
-                <div>
-                    <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">AI</span></h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Global Messaging Core</p>
-                </div>
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center"><span class="text-blue-600 font-black text-xl">NX</span></div>
+                <h1 class="text-2xl font-extrabold italic">NX<span class="text-blue-400">AI</span> <span class="text-[10px] not-italic text-slate-500 tracking-widest uppercase ml-2">Studio</span></h1>
             </div>
-            <div class="flex gap-4 items-center glass-card px-6 py-3">
-                <div class="text-right">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase">Balance Global</p>
-                    <p class="text-white font-mono text-lg italic font-black">ACTIVE</p>
-                </div>
-                <div class="h-8 w-[1px] bg-slate-700"></div>
-                <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span> API CONNECTED
-                </div>
-            </div>
+            <div id="counter" class="font-mono text-xs bg-blue-500/10 text-blue-400 px-4 py-2 rounded-full border border-blue-500/20">READY</div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 space-y-6">
-                <div class="glass-card p-8">
-                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="bi bi-person-plus-fill"></i> 01. Destino y Estrategia
-                    </h2>
-
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center type-active">
-                            <i class="bi bi-phone text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Individual</span>
-                        </button>
-                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-4 text-center opacity-50">
-                            <i class="bi bi-layers text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Masivo (Excel)</span>
-                        </button>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-4 space-y-4">
+                <div class="glass-card p-6">
+                    <div class="flex gap-2 mb-6">
+                        <button onclick="setMode('individual')" id="btn-mode-ind" class="flex-1 p-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase bg-blue-500/20 border-blue-500/50">Individual</button>
+                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="flex-1 p-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase opacity-50">Masivo</button>
                     </div>
 
-                    <div id="ind-target" class="mb-6">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Número Internacional</label>
-                        <input type="tel" id="phone" class="w-full p-4">
+                    <div id="ind-target" class="mb-4">
+                        <input type="tel" id="phone" class="w-full p-3">
                     </div>
 
-                    <div id="bulk-target" class="mb-6 hidden">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Base de Datos (.xlsx / .csv)</label>
-                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center hover:border-blue-500 cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
-                            <input type="file" id="file" class="hidden" accept=".xlsx, .xls, .csv">
-                            <i class="bi bi-cloud-upload text-2xl text-slate-500 mb-2 block"></i>
-                            <p id="file-name" class="text-xs text-slate-400 italic font-mono">Click para cargar</p>
+                    <div id="bulk-target" class="mb-4 hidden">
+                        <input type="file" id="file" class="hidden" accept=".xlsx, .xls, .csv">
+                        <div class="border-2 border-dashed border-slate-700 p-4 rounded-xl text-center cursor-pointer hover:border-blue-500" onclick="document.getElementById('file').click()">
+                            <p id="file-name" class="text-[10px] text-slate-400 font-mono">Subir Excel (phone, name)</p>
                         </div>
                     </div>
 
-                    <div class="h-[1px] bg-slate-800 my-8"></div>
-
-                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="bi bi-chat-left-dots-fill"></i> 02. Tipo de Contenido
-                    </h2>
-
-                    <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Apertura (Fuera de ventana)">
-                            <option value="tpl_vyv_1">🚀 VyV_1 (Imagen + 3 Vars)</option>
-                            <option value="tpl_promo_video">🎥 Promo Video NXAI</option>
-                            <option value="tpl_3cx_pdf">📄 Presentación 3CX (PDF)</option>
-                            <option value="tpl_solutions">🎠 Carrusel Solutions</option>
-                            <option value="tpl_bienvenida">👋 Bienvenida v3</option>
-                            <option value="tpl_novedades">🆕 Novedades v1</option>
-                            <option value="tpl_soporte">🛠️ Soporte v1</option>
-                            <option value="tpl_cta_web">🌐 CTA Web v1</option>
-                            <option value="tpl_cta_phone">📞 CTA Phone v1</option>
-                            <option value="tpl_interactivo">🔘 Interactivo Buttons</option>
-                            <option value="tpl_generic">📝 Otra Plantilla (Manual)</option>
-                        </optgroup>
-                        <optgroup label="Sesión (Dentro de ventana)">
-                            <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image">🖼️ Imagen / Fotografía</option>
-                            <option value="document">📄 Documento PDF</option>
-                        </optgroup>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2">Seleccionar Plantilla</label>
+                    <select id="msgType" class="w-full p-3 font-bold text-sm mb-4" onchange="buildDynamicInputs()">
+                        <option value="text">💬 Mensaje de Texto (Sesión)</option>
+                        <option value="image">🖼️ Imagen Libre (Sesión)</option>
+                        <option value="tpl_vyv_1">🚀 VyV_1 (Imagen + 3 Vars)</option>
+                        <option value="tpl_promo_video">🎥 Promo Video (Video + 1 Var)</option>
+                        <option value="tpl_3cx_pdf">📄 Presentación 3CX (PDF + 1 Var)</option>
+                        <option value="tpl_bienvenida">👋 Bienvenida v3 (1 Var)</option>
+                        <option value="tpl_cta_web">🌐 CTA Web v1 (1 Var)</option>
+                        <option value="tpl_interactivo">🔘 Interactivo (1 Var)</option>
                     </select>
 
-                    <div id="content-fields" class="space-y-4">
-                        <div id="group-template" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre Técnico de Plantilla</label>
-                            <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: mi_plantilla_v2">
-                        </div>
-                        <div id="group-text" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Cuerpo del Mensaje</label>
-                            <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}}"></textarea>
-                        </div>
-                        <div id="group-media" class="hidden">
-                            <label id="label-media" class="block text-[10px] font-black text-slate-500 uppercase mb-1">URL del Archivo</label>
-                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://dominio.com/archivo.ext">
-                        </div>
-                    </div>
+                    <div id="dynamic-inputs" class="space-y-4"></div>
 
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all hover:scale-[1.02]">
-                        <i class="bi bi-lightning-fill mr-2"></i> Transmitir Mensaje
+                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-6 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all">
+                        Enviar ahora
                     </button>
                 </div>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="glass-card p-8 h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
-                            <i class="bi bi-gpu-card"></i> Process Engine Status
-                        </h2>
-                        <div id="counter" class="font-mono text-xs text-slate-500">READY</div>
-                    </div>
-                    <div id="logs" class="flex-grow space-y-4 overflow-y-auto max-h-[650px] pr-4 custom-scroll">
-                        <div class="text-center py-20 opacity-20 italic">
-                            <i class="bi bi-terminal-x text-6xl block mb-4"></i>
-                            <p class="font-mono text-sm">Esperando parámetros...</p>
+            <div class="lg:col-span-3">
+                <div class="glass-card p-6 sticky top-8">
+                    <h3 class="text-[10px] font-black text-slate-500 uppercase mb-6 tracking-widest text-center">Vista Previa Móvil</h3>
+                    <div class="flex justify-center">
+                        <div class="wa-bubble">
+                            <div id="preview-header" class="wa-header hidden"></div>
+                            <div id="preview-body" class="wa-body italic text-slate-400">Selecciona una plantilla para previsualizar...</div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="lg:col-span-5">
+                <div class="glass-card p-6 h-[600px] flex flex-col">
+                    <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Consola de Transmisión</h3>
+                    <div id="logs" class="overflow-y-auto flex-grow custom-scroll space-y-2"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -184,115 +105,127 @@
         let currentMode = 'individual';
         let iti;
 
+        // Diccionario Maestro de Plantillas
+        const TPL_CONFIG = {
+            'text': { header: null, vars: 0, text: "Escribe tu mensaje libre...", hasBody: true },
+            'image': { header: 'image', vars: 0, text: "Mensaje de sesión con imagen", hasBody: false },
+            'tpl_vyv_1': { name: 'vyv_1', header: 'image', vars: 3, labels: ['Nombre Cliente', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info." },
+            'tpl_promo_video': { name: 'promo_video_nxai', header: 'video', vars: 1, labels: ['Nombre Cliente'], text: "Hola {{1}}, mira este video de NXAI." },
+            'tpl_3cx_pdf': { name: 'presentacion_3cx_pdf', header: 'document', vars: 1, labels: ['Nombre Cliente'], text: "Hola {{1}}, te envío el PDF de 3CX." },
+            'tpl_bienvenida': { name: 'bienvenida_nxai_v3', header: null, vars: 1, labels: ['Nombre Cliente'], text: "¡Bienvenido {{1}} al soporte de NXAI!" },
+            'tpl_cta_web': { name: 'nxai_cta_web_v1', header: null, vars: 1, labels: ['Nombre Cliente'], text: "Hola {{1}}, visita nuestra web aquí abajo." },
+            'tpl_interactivo': { name: 'nxai_interactivo_v1', header: null, vars: 1, labels: ['Nombre Cliente'], text: "Estimado {{1}}, ¿Deseas continuar?" }
+        };
+
         window.onload = () => {
-            const input = document.querySelector("#phone");
-            iti = window.intlTelInput(input, {
-                initialCountry: "pe",
-                separateDialCode: true,
-                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
-            });
-            toggleContentFields();
+            iti = window.intlTelInput(document.querySelector("#phone"), { initialCountry: "pe", separateDialCode: true });
+            buildDynamicInputs();
         };
 
         function setMode(mode) {
             currentMode = mode;
             document.getElementById('ind-target').classList.toggle('hidden', mode !== 'individual');
             document.getElementById('bulk-target').classList.toggle('hidden', mode === 'individual');
-            document.getElementById('btn-mode-ind').classList.toggle('type-active', mode === 'individual');
-            document.getElementById('btn-mode-bulk').classList.toggle('type-active', mode === 'bulk');
-            document.getElementById('btn-mode-ind').style.opacity = mode === 'individual' ? '1' : '0.5';
-            document.getElementById('btn-mode-bulk').style.opacity = mode === 'bulk' ? '1' : '0.5';
+            document.getElementById('btn-mode-ind').classList.toggle('bg-blue-500/20', mode === 'individual');
+            document.getElementById('btn-mode-bulk').classList.toggle('bg-blue-500/20', mode === 'bulk');
         }
 
-        function toggleContentFields() {
+        // --- GENERADOR DINÁMICO DE INPUTS Y PREVIEW ---
+        function buildDynamicInputs() {
             const type = document.getElementById('msgType').value;
-            const groupTpl = document.getElementById('group-template');
-            const groupText = document.getElementById('group-text');
-            const groupMedia = document.getElementById('group-media');
-            const labelMedia = document.getElementById('label-media');
+            const container = document.getElementById('dynamic-inputs');
+            const config = TPL_CONFIG[type];
+            container.innerHTML = '';
 
-            groupTpl.classList.add('hidden');
-            groupText.classList.add('hidden');
-            groupMedia.classList.add('hidden');
-
-            if (type === 'tpl_generic') groupTpl.classList.remove('hidden');
-            if (type === 'text') groupText.classList.remove('hidden');
-            
-            const mediaTypes = ['image', 'document', 'tpl_vyv_1', 'tpl_promo_video', 'tpl_3cx_pdf'];
-            if (mediaTypes.includes(type)) {
-                groupMedia.classList.remove('hidden');
-                if (type === 'tpl_vyv_1') labelMedia.innerText = "URL IMAGEN (VyV_1)";
-                else if (type === 'tpl_promo_video') labelMedia.innerText = "URL VIDEO (Promo)";
-                else if (type === 'tpl_3cx_pdf' || type === 'document') labelMedia.innerText = "URL PDF (Documento)";
-                else labelMedia.innerText = "URL IMAGEN (Sesión)";
+            // 1. Campo para Media (Imagen/Video/PDF)
+            if (config.header) {
+                const label = config.header.toUpperCase();
+                container.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1">URL ${label}</label>
+                <input type="url" id="media_input" oninput="updatePreview()" class="w-full p-2 text-xs" placeholder="https://..."></div>`;
             }
+
+            // 2. Campo para Texto Libre (Si es sesión)
+            if (config.hasBody) {
+                container.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1">MENSAJE</label>
+                <textarea id="text_input" oninput="updatePreview()" class="w-full p-2 text-xs" rows="3"></textarea></div>`;
+            }
+
+            // 3. Generar inputs para Variables ({{1}}, {{2}}...)
+            for (let i = 1; i <= config.vars; i++) {
+                const label = config.labels ? config.labels[i-1] : `Variable ${i}`;
+                container.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1">${label}</label>
+                <input type="text" id="var_${i}" oninput="updatePreview()" class="w-full p-2 text-xs" placeholder="Ej: Valor ${i}"></div>`;
+            }
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const type = document.getElementById('msgType').value;
+            const config = TPL_CONFIG[type];
+            const pHeader = document.getElementById('preview-header');
+            const pBody = document.getElementById('preview-body');
+
+            // Header Preview
+            if (config.header) {
+                pHeader.classList.remove('hidden');
+                pHeader.innerHTML = `<span class="opacity-50">📎 [${config.header.toUpperCase()}]</span>`;
+            } else { pHeader.classList.add('hidden'); }
+
+            // Body Preview con reemplazo dinámico
+            let content = config.text || document.getElementById('text_input')?.value || "";
+            for (let i = 1; i <= config.vars; i++) {
+                const val = document.getElementById(`var_${i}`)?.value || `(Var ${i})`;
+                content = content.replace(`{{${i}}}`, `<span class="wa-variable">${val}</span>`);
+            }
+            pBody.innerHTML = content;
         }
 
         async function initProcess() {
             const btn = document.getElementById('sendBtn');
             const selectedType = document.getElementById('msgType').value;
+            const config = TPL_CONFIG[selectedType];
             btn.disabled = true;
             let contacts = [];
 
+            // Obtener Contactos
             if (currentMode === 'individual') {
-                const fullNumber = iti.getNumber();
+                const num = iti.getNumber().replace('+', '');
                 if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
-                contacts.push({ phone: fullNumber.replace('+', ''), name: 'Cliente' });
+                contacts.push({ phone: num, name: 'Cliente' });
             } else {
-                const fileInput = document.getElementById('file');
-                if (!fileInput.files.length) { alert("Sube un Excel"); btn.disabled = false; return; }
-                const data = await fileInput.files[0].arrayBuffer();
+                const fInput = document.getElementById('file');
+                if (!fInput.files.length) { alert("Sube un Excel"); btn.disabled = false; return; }
+                const data = await fInput.files[0].arrayBuffer();
                 const workbook = XLSX.read(data);
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-                contacts = json.map(r => ({
+                contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
                     phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
                     name: r.name || r.nombre || 'Cliente'
-                })).filter(c => c.phone.length > 5);
+                }));
             }
 
-            document.getElementById('logs').innerHTML = '';
-            let ok = 0;
-
             for (let c of contacts) {
-                renderLog(c.phone, 'Transmitiendo...', 'waiting');
+                renderLog(c.phone, 'Transmitiendo...');
                 try {
-                    let payload = { to: c.phone };
-                    const customMedia = document.getElementById('mediaUrl').value;
-
-                    if (selectedType.startsWith('tpl_')) {
-                        payload.type = 'template';
-                        switch(selectedType) {
-                            case 'tpl_vyv_1':
-                                payload.templateName = 'vyv_1';
-                                payload.header = { type: 'image', link: customMedia || "https://i.postimg.cc/W3D7tWCX/logo.png" };
-                                payload.vars = [c.name, "David", "Less"];
-                                break;
-                            case 'tpl_promo_video':
-                                payload.templateName = 'promo_video_nxai';
-                                payload.header = { type: 'video', link: customMedia };
-                                payload.vars = [c.name];
-                                break;
-                            case 'tpl_3cx_pdf':
-                                payload.templateName = 'presentacion_3cx_pdf';
-                                payload.header = { type: 'document', link: customMedia, filename: "Presentacion_NXAI.pdf" };
-                                payload.vars = [c.name];
-                                break;
-                            case 'tpl_solutions': payload.templateName = 'nxai_solutions_v4'; break;
-                            case 'tpl_bienvenida': payload.templateName = 'bienvenida_nxai_v3'; payload.vars = [c.name]; break;
-                            case 'tpl_novedades': payload.templateName = 'novedades_nxai_v1'; payload.vars = [c.name]; break;
-                            case 'tpl_soporte': payload.templateName = 'soporte_nxai_v1'; payload.vars = [c.name]; break;
-                            case 'tpl_cta_web': payload.templateName = 'nxai_cta_web_v1'; payload.vars = [c.name]; break;
-                            case 'tpl_cta_phone': payload.templateName = 'nxai_cta_phone_v1'; payload.vars = [c.name]; break;
-                            case 'tpl_interactivo': payload.templateName = 'nxai_interactivo_v1'; payload.vars = [c.name]; break;
-                            case 'tpl_generic': 
-                                payload.templateName = document.getElementById('tplName').value; 
-                                payload.vars = [c.name]; 
-                                break;
+                    let payload = { to: c.phone, type: selectedType.startsWith('tpl_') ? 'template' : selectedType };
+                    
+                    if (payload.type === 'template') {
+                        payload.templateName = config.name;
+                        // Mapear variables dinámicas
+                        payload.vars = [];
+                        for (let i = 1; i <= config.vars; i++) {
+                            // Si la primera variable es el nombre, lo tomamos del Excel automáticamente
+                            let val = document.getElementById(`var_${i}`).value;
+                            if (i === 1 && val === "") val = c.name; 
+                            payload.vars.push(val);
+                        }
+                        if (config.header) {
+                            payload.header = { type: config.header, link: document.getElementById('media_input').value };
+                            if (config.header === 'document') payload.header.filename = "NXAI_Info.pdf";
                         }
                     } else {
-                        payload.type = selectedType;
-                        if (selectedType === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
-                        if (selectedType === 'image' || selectedType === 'document') payload.mediaUrl = customMedia;
+                        if (selectedType === 'text') payload.message = document.getElementById('text_input').value.replace('{{name}}', c.name);
+                        if (selectedType === 'image') payload.mediaUrl = document.getElementById('media_input').value;
                     }
 
                     const res = await fetch(WORKER_URL, {
@@ -302,39 +235,27 @@
                     });
 
                     const result = await res.json();
-                    if (res.ok && result.code === 0) {
-                        ok++;
-                        updateLog(c.phone, 'Éxito', 'success', 'bi-check2-all');
-                    } else {
-                        updateLog(c.phone, result.message || 'Error Meta', 'error', 'bi-shield-exclamation');
-                    }
-                } catch (e) {
-                    updateLog(c.phone, 'Error de conexión', 'error', 'bi-wifi-off');
-                }
-                document.getElementById('counter').innerText = `${ok}/${contacts.length} ENVIADOS`;
+                    updateLog(c.phone, result.code === 0 ? 'Entregado' : 'Error Meta', result.code === 0 ? 'success' : 'error');
+                } catch (e) { updateLog(c.phone, 'Fallo de Red', 'error'); }
             }
             btn.disabled = false;
         }
 
-        function renderLog(phone, msg, status) {
-            const container = document.getElementById('logs');
+        // --- SISTEMA DE LOGS ---
+        function renderLog(phone, msg) {
             const div = document.createElement('div');
             div.id = `log-${phone}`;
-            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse mb-3';
-            div.innerHTML = `<div class="flex items-center gap-4"><div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">${phone.slice(-4)}</div><div><p class="text-xs font-black tracking-tighter text-white">+${phone}</p><p id="txt-${phone}" class="text-[10px] text-slate-500 font-mono mt-1 uppercase">${msg}</p></div></div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
-            container.prepend(div);
+            div.className = 'p-3 bg-white/5 rounded-lg border border-white/5 flex justify-between items-center';
+            div.innerHTML = `<div><p class="text-[10px] font-bold text-white">${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 font-mono">${msg}</p></div><div id="st-${phone}" class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>`;
+            document.getElementById('logs').prepend(div);
         }
 
-        function updateLog(phone, msg, status, icon) {
-            const row = document.getElementById(`log-${phone}`);
-            if(!row) return;
-            const badge = document.getElementById(`badge-${phone}`);
-            const text = document.getElementById(`txt-${phone}`);
-            row.classList.remove('animate-pulse');
-            row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
-            badge.className = `status-pill status-${status}`;
-            badge.innerHTML = `<i class="bi ${icon || ''} mr-1"></i> ${status.toUpperCase()}`;
-            text.innerText = msg;
+        function updateLog(phone, msg, status) {
+            const txt = document.getElementById(`txt-${phone}`);
+            const st = document.getElementById(`st-${phone}`);
+            txt.innerText = msg;
+            st.classList.remove('animate-pulse', 'bg-blue-500');
+            st.classList.add(status === 'success' ? 'bg-green-500' : 'bg-red-500');
         }
 
         document.getElementById('file').onchange = (e) => {
