@@ -134,29 +134,36 @@
                     </h2>
 
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Apertura (Fuera de ventana)">
-                            <option value="template_main">🚀 Plantilla: vyv_1 (Automatizada)</option>
-                            <option value="template">📝 Otra Plantilla (Manual)</option>
+                        <optgroup label="Plantillas Especiales">
+                            <option value="tpl_vyv_1">🚀 VyV_1 (Imagen + 3 Vars)</option>
+                            <option value="tpl_promo_video">🎥 Promo Video NXAI</option>
+                            <option value="tpl_3cx_pdf">📄 Presentación 3CX (PDF)</option>
+                            <option value="tpl_solutions">🎠 Carrusel Solutions</option>
                         </optgroup>
-                        <optgroup label="Sesión (Dentro de ventana)">
+                        <optgroup label="Plantillas Normales">
+                            <option value="tpl_bienvenida">👋 Bienvenida NXAI v3</option>
+                            <option value="tpl_novedades">🆕 Novedades NXAI v1</option>
+                            <option value="tpl_soporte">🛠️ Soporte NXAI v1</option>
+                            <option value="tpl_generic">📝 Otra Plantilla (Manual)</option>
+                        </optgroup>
+                        <optgroup label="Sesión (24h)">
                             <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image">🖼️ Imagen / Fotografía</option>
-                            <option value="document">📄 Documento PDF</option>
+                            <option value="image">🖼️ Imagen Libre</option>
                         </optgroup>
                     </select>
 
                     <div id="content-fields" class="space-y-4">
                         <div id="group-template" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre de la Plantilla en Meta</label>
-                            <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: bienvenida_premium">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre Técnico de Plantilla</label>
+                            <input type="text" id="tplName" class="w-full p-4 font-mono text-sm" placeholder="ej: mi_plantilla_v2">
                         </div>
                         <div id="group-text" class="hidden">
                             <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Cuerpo del Mensaje</label>
                             <textarea id="body" rows="4" class="w-full p-4 text-sm" placeholder="Escribe aquí... usa {{name}}"></textarea>
                         </div>
                         <div id="group-media" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">URL del Archivo</label>
-                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://miweb.com/archivo.pdf">
+                            <label id="label-media" class="block text-[10px] font-black text-slate-500 uppercase mb-1">URL del Archivo</label>
+                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://dominio.com/archivo.jpg">
                         </div>
                     </div>
 
@@ -197,7 +204,7 @@
                 separateDialCode: true,
                 utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
             });
-            toggleContentFields(); // Inicializar vista
+            toggleContentFields();
         };
 
         function setMode(mode) {
@@ -212,9 +219,26 @@
 
         function toggleContentFields() {
             const type = document.getElementById('msgType').value;
-            document.getElementById('group-template').classList.toggle('hidden', type !== 'template');
-            document.getElementById('group-text').classList.toggle('hidden', !['text'].includes(type));
-            document.getElementById('group-media').classList.toggle('hidden', !['image', 'document'].includes(type));
+            const groupTpl = document.getElementById('group-template');
+            const groupText = document.getElementById('group-text');
+            const groupMedia = document.getElementById('group-media');
+            const labelMedia = document.getElementById('label-media');
+
+            // Reset
+            groupTpl.classList.add('hidden');
+            groupText.classList.add('hidden');
+            groupMedia.classList.add('hidden');
+
+            if (type === 'tpl_generic') groupTpl.classList.remove('hidden');
+            if (type === 'text') groupText.classList.remove('hidden');
+            
+            // Lógica de Media según Plantilla
+            if (['image', 'tpl_vyv_1', 'tpl_promo_video', 'tpl_3cx_pdf'].includes(type)) {
+                groupMedia.classList.remove('hidden');
+                if (type === 'tpl_vyv_1') labelMedia.innerText = "URL IMAGEN (VyV_1)";
+                if (type === 'tpl_promo_video') labelMedia.innerText = "URL VIDEO (Promo)";
+                if (type === 'tpl_3cx_pdf') labelMedia.innerText = "URL PDF (Documento)";
+            }
         }
 
         async function initProcess() {
@@ -243,40 +267,56 @@
             let ok = 0;
 
             for (let c of contacts) {
-                renderLog(c.phone, 'Sincronizando...', 'waiting');
+                renderLog(c.phone, 'Preparando Payload...', 'waiting');
                 try {
-                    let payload = { 
-                        to: c.phone,
-                        type: selectedType.startsWith('template') ? 'template' : selectedType 
-                    };
+                    let payload = { to: c.phone };
+                    const customMedia = document.getElementById('mediaUrl').value;
 
-                    // CORRECCIÓN CLAVE: ESTRUCTURA SEGÚN POSTMAN LOG PARA vyv_1
-                    if (selectedType === 'template_main') {
-                        payload.templateName = 'vyv_1';
-                        payload.components = [
-                            {
-                                type: "header",
-                                parameters: [{
-                                    type: "image",
-                                    image: { link: "https://i.postimg.cc/W3D7tWCX/logo.png" }
-                                }]
-                            },
-                            {
-                                type: "body",
-                                parameters: [
-                                    { type: "text", text: c.name }, // Var 1: Nombre del Excel
-                                    { type: "text", text: "David" },  // Var 2: Según tu log
-                                    { type: "text", text: "Less" }    // Var 3: Según tu log
-                                ]
-                            }
-                        ];
-                    } else if (selectedType === 'template') {
-                        payload.templateName = document.getElementById('tplName').value;
-                        payload.components = [{ type: "body", parameters: [{ type: "text", text: c.name }] }];
-                    } else if (selectedType === 'text') {
-                        payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
+                    // LÓGICA DE CONSTRUCCIÓN SEGÚN TU LISTA DE PLANTILLAS
+                    if (selectedType.startsWith('tpl_')) {
+                        payload.type = 'template';
+                        
+                        switch(selectedType) {
+                            case 'tpl_vyv_1':
+                                payload.templateName = 'vyv_1';
+                                payload.header = { type: 'image', link: customMedia || "https://i.postimg.cc/W3D7tWCX/logo.png" };
+                                payload.vars = [c.name, "David", "Less"]; // 3 variables
+                                break;
+                            case 'tpl_promo_video':
+                                payload.templateName = 'promo_video_nxai';
+                                payload.header = { type: 'video', link: customMedia };
+                                payload.vars = [c.name];
+                                break;
+                            case 'tpl_3cx_pdf':
+                                payload.templateName = 'presentacion_3cx_pdf';
+                                payload.header = { type: 'document', link: customMedia, filename: "Presentacion_NXAI.pdf" };
+                                payload.vars = [c.name];
+                                break;
+                            case 'tpl_solutions':
+                                payload.templateName = 'nxai_solutions_v4';
+                                payload.isCarousel = true;
+                                break;
+                            case 'tpl_bienvenida':
+                                payload.templateName = 'bienvenida_nxai_v3';
+                                payload.vars = [c.name];
+                                break;
+                            case 'tpl_novedades':
+                                payload.templateName = 'novedades_nxai_v1';
+                                payload.vars = [c.name];
+                                break;
+                            case 'tpl_soporte':
+                                payload.templateName = 'soporte_nxai_v1';
+                                payload.vars = [c.name];
+                                break;
+                            case 'tpl_generic':
+                                payload.templateName = document.getElementById('tplName').value;
+                                payload.vars = [c.name];
+                                break;
+                        }
                     } else {
-                        payload.mediaUrl = document.getElementById('mediaUrl').value;
+                        payload.type = selectedType;
+                        if (selectedType === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
+                        if (selectedType === 'image') payload.mediaUrl = customMedia;
                     }
 
                     const res = await fetch(WORKER_URL, {
@@ -304,7 +344,7 @@
             const container = document.getElementById('logs');
             const div = document.createElement('div');
             div.id = `log-${phone}`;
-            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse';
+            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse mb-3';
             div.innerHTML = `
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">${phone.slice(-4)}</div>
