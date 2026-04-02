@@ -20,7 +20,6 @@
             color: #f8fafc;
             min-height: 100vh;
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(20px);
@@ -28,47 +27,33 @@
             border-radius: 28px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .glass-card:hover {
             border-color: #38bdf8;
             background: rgba(255, 255, 255, 0.04);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-
         .gradient-btn {
             background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
-
         .iti { width: 100%; }
         .iti__country-list { background-color: #1e293b; border: 1px solid #334155; color: white; }
-        .iti__country:hover { background-color: #334155; }
-        
         input, select, textarea {
             background: rgba(15, 23, 42, 0.8) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: white !important;
             border-radius: 14px !important;
         }
-
-        .status-pill {
-            padding: 2px 10px;
-            border-radius: 99px;
-            font-size: 0.65rem;
-            font-weight: 800;
-        }
-
+        .status-pill { padding: 2px 10px; border-radius: 99px; font-size: 0.65rem; font-weight: 800; }
         .status-waiting { background: #334155; color: #94a3b8; }
         .status-success { background: #065f46; color: #34d399; }
         .status-error { background: #7f1d1d; color: #f87171; }
-
         .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-10">
-
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="flex items-center gap-5">
@@ -134,21 +119,23 @@
                     </h2>
 
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Plantillas Especiales">
+                        <optgroup label="Apertura (Fuera de ventana)">
                             <option value="tpl_vyv_1">🚀 VyV_1 (Imagen + 3 Vars)</option>
                             <option value="tpl_promo_video">🎥 Promo Video NXAI</option>
                             <option value="tpl_3cx_pdf">📄 Presentación 3CX (PDF)</option>
                             <option value="tpl_solutions">🎠 Carrusel Solutions</option>
-                        </optgroup>
-                        <optgroup label="Plantillas Normales">
-                            <option value="tpl_bienvenida">👋 Bienvenida NXAI v3</option>
-                            <option value="tpl_novedades">🆕 Novedades NXAI v1</option>
-                            <option value="tpl_soporte">🛠️ Soporte NXAI v1</option>
+                            <option value="tpl_bienvenida">👋 Bienvenida v3</option>
+                            <option value="tpl_novedades">🆕 Novedades v1</option>
+                            <option value="tpl_soporte">🛠️ Soporte v1</option>
+                            <option value="tpl_cta_web">🌐 CTA Web v1</option>
+                            <option value="tpl_cta_phone">📞 CTA Phone v1</option>
+                            <option value="tpl_interactivo">🔘 Interactivo Buttons</option>
                             <option value="tpl_generic">📝 Otra Plantilla (Manual)</option>
                         </optgroup>
-                        <optgroup label="Sesión (24h)">
+                        <optgroup label="Sesión (Dentro de ventana)">
                             <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image">🖼️ Imagen Libre</option>
+                            <option value="image">🖼️ Imagen / Fotografía</option>
+                            <option value="document">📄 Documento PDF</option>
                         </optgroup>
                     </select>
 
@@ -163,7 +150,7 @@
                         </div>
                         <div id="group-media" class="hidden">
                             <label id="label-media" class="block text-[10px] font-black text-slate-500 uppercase mb-1">URL del Archivo</label>
-                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://dominio.com/archivo.jpg">
+                            <input type="url" id="mediaUrl" class="w-full p-4 text-xs font-mono" placeholder="https://dominio.com/archivo.ext">
                         </div>
                     </div>
 
@@ -224,7 +211,6 @@
             const groupMedia = document.getElementById('group-media');
             const labelMedia = document.getElementById('label-media');
 
-            // Reset
             groupTpl.classList.add('hidden');
             groupText.classList.add('hidden');
             groupMedia.classList.add('hidden');
@@ -232,12 +218,13 @@
             if (type === 'tpl_generic') groupTpl.classList.remove('hidden');
             if (type === 'text') groupText.classList.remove('hidden');
             
-            // Lógica de Media según Plantilla
-            if (['image', 'tpl_vyv_1', 'tpl_promo_video', 'tpl_3cx_pdf'].includes(type)) {
+            const mediaTypes = ['image', 'document', 'tpl_vyv_1', 'tpl_promo_video', 'tpl_3cx_pdf'];
+            if (mediaTypes.includes(type)) {
                 groupMedia.classList.remove('hidden');
                 if (type === 'tpl_vyv_1') labelMedia.innerText = "URL IMAGEN (VyV_1)";
-                if (type === 'tpl_promo_video') labelMedia.innerText = "URL VIDEO (Promo)";
-                if (type === 'tpl_3cx_pdf') labelMedia.innerText = "URL PDF (Documento)";
+                else if (type === 'tpl_promo_video') labelMedia.innerText = "URL VIDEO (Promo)";
+                else if (type === 'tpl_3cx_pdf' || type === 'document') labelMedia.innerText = "URL PDF (Documento)";
+                else labelMedia.innerText = "URL IMAGEN (Sesión)";
             }
         }
 
@@ -267,20 +254,18 @@
             let ok = 0;
 
             for (let c of contacts) {
-                renderLog(c.phone, 'Preparando Payload...', 'waiting');
+                renderLog(c.phone, 'Transmitiendo...', 'waiting');
                 try {
                     let payload = { to: c.phone };
                     const customMedia = document.getElementById('mediaUrl').value;
 
-                    // LÓGICA DE CONSTRUCCIÓN SEGÚN TU LISTA DE PLANTILLAS
                     if (selectedType.startsWith('tpl_')) {
                         payload.type = 'template';
-                        
                         switch(selectedType) {
                             case 'tpl_vyv_1':
                                 payload.templateName = 'vyv_1';
                                 payload.header = { type: 'image', link: customMedia || "https://i.postimg.cc/W3D7tWCX/logo.png" };
-                                payload.vars = [c.name, "David", "Less"]; // 3 variables
+                                payload.vars = [c.name, "David", "Less"];
                                 break;
                             case 'tpl_promo_video':
                                 payload.templateName = 'promo_video_nxai';
@@ -292,31 +277,22 @@
                                 payload.header = { type: 'document', link: customMedia, filename: "Presentacion_NXAI.pdf" };
                                 payload.vars = [c.name];
                                 break;
-                            case 'tpl_solutions':
-                                payload.templateName = 'nxai_solutions_v4';
-                                payload.isCarousel = true;
-                                break;
-                            case 'tpl_bienvenida':
-                                payload.templateName = 'bienvenida_nxai_v3';
-                                payload.vars = [c.name];
-                                break;
-                            case 'tpl_novedades':
-                                payload.templateName = 'novedades_nxai_v1';
-                                payload.vars = [c.name];
-                                break;
-                            case 'tpl_soporte':
-                                payload.templateName = 'soporte_nxai_v1';
-                                payload.vars = [c.name];
-                                break;
-                            case 'tpl_generic':
-                                payload.templateName = document.getElementById('tplName').value;
-                                payload.vars = [c.name];
+                            case 'tpl_solutions': payload.templateName = 'nxai_solutions_v4'; break;
+                            case 'tpl_bienvenida': payload.templateName = 'bienvenida_nxai_v3'; payload.vars = [c.name]; break;
+                            case 'tpl_novedades': payload.templateName = 'novedades_nxai_v1'; payload.vars = [c.name]; break;
+                            case 'tpl_soporte': payload.templateName = 'soporte_nxai_v1'; payload.vars = [c.name]; break;
+                            case 'tpl_cta_web': payload.templateName = 'nxai_cta_web_v1'; payload.vars = [c.name]; break;
+                            case 'tpl_cta_phone': payload.templateName = 'nxai_cta_phone_v1'; payload.vars = [c.name]; break;
+                            case 'tpl_interactivo': payload.templateName = 'nxai_interactivo_v1'; payload.vars = [c.name]; break;
+                            case 'tpl_generic': 
+                                payload.templateName = document.getElementById('tplName').value; 
+                                payload.vars = [c.name]; 
                                 break;
                         }
                     } else {
                         payload.type = selectedType;
                         if (selectedType === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
-                        if (selectedType === 'image') payload.mediaUrl = customMedia;
+                        if (selectedType === 'image' || selectedType === 'document') payload.mediaUrl = customMedia;
                     }
 
                     const res = await fetch(WORKER_URL, {
@@ -328,7 +304,7 @@
                     const result = await res.json();
                     if (res.ok && result.code === 0) {
                         ok++;
-                        updateLog(c.phone, 'Transmitido con éxito', 'success', 'bi-check2-all');
+                        updateLog(c.phone, 'Éxito', 'success', 'bi-check2-all');
                     } else {
                         updateLog(c.phone, result.message || 'Error Meta', 'error', 'bi-shield-exclamation');
                     }
@@ -345,16 +321,7 @@
             const div = document.createElement('div');
             div.id = `log-${phone}`;
             div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 animate-pulse mb-3';
-            div.innerHTML = `
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">${phone.slice(-4)}</div>
-                    <div>
-                        <p class="text-xs font-black tracking-tighter text-white">+${phone}</p>
-                        <p id="txt-${phone}" class="text-[10px] text-slate-500 font-mono mt-1 uppercase">${msg}</p>
-                    </div>
-                </div>
-                <div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>
-            `;
+            div.innerHTML = `<div class="flex items-center gap-4"><div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-xs text-blue-400">${phone.slice(-4)}</div><div><p class="text-xs font-black tracking-tighter text-white">+${phone}</p><p id="txt-${phone}" class="text-[10px] text-slate-500 font-mono mt-1 uppercase">${msg}</p></div></div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
             container.prepend(div);
         }
 
