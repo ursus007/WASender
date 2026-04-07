@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXAI | WhatsApp Sendere</title>
+    <title>NXAI | Enterprise WhatsApp Suite</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -16,7 +16,7 @@
     <style>
         body { font-family: 'Outfit', sans-serif; background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; }
         .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; transition: all 0.4s ease; }
-        .glass-card:hover { border-color: #38bdf8; background: rgba(255, 255, 255, 0.04); }
+        .glass-card:hover { border-color: #38bdf8; background: rgba(255, 255, 255, 0.04); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .gradient-btn { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
         .iti { width: 100%; }
         input, select, textarea { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; border-radius: 14px !important; }
@@ -41,25 +41,25 @@
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center">
+                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.1)]">
                     <span class="text-blue-600 font-black text-3xl">NX</span>
                 </div>
                 <div>
                     <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">AI</span> Studio</h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">WA Sender</p>
+                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Enterprise Messaging HUB</p>
                 </div>
             </div>
             <div class="flex gap-4 items-center glass-card px-6 py-3">
                 <div class="text-right">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase">Estado Motor</p>
-                    <p id="counter" class="text-white font-mono text-lg italic font-black uppercase">READY</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase italic">Status Motor</p>
+                    <p id="counter" class="text-white font-mono text-lg italic font-black">IDLE</p>
                 </div>
                 <div class="h-8 w-[1px] bg-slate-700"></div>
                 <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span> API ACTIVE
+                    </span> API ONLINE
                 </div>
             </div>
         </header>
@@ -79,7 +79,7 @@
                     </div>
 
                     <div id="ind-target" class="mb-6">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Número de Destino</label>
+                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Número WhatsApp</label>
                         <input type="tel" id="phone" class="w-full p-4">
                     </div>
 
@@ -87,59 +87,61 @@
                         <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
                             <input type="file" id="file" class="hidden" accept=".xlsx, .xls">
                             <i class="bi bi-file-earmark-spreadsheet text-2xl text-slate-500 mb-2 block"></i>
-                            <p id="file-name" class="text-xs text-slate-400 italic">Cargar Base Excel</p>
+                            <p id="file-name" class="text-xs text-slate-400 italic font-mono uppercase">Subir Base de Datos</p>
                         </div>
                     </div>
 
                     <div class="h-[1px] bg-slate-800 my-8"></div>
 
-                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Configuración de Envío</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Seleccionar Mensaje</label>
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Plantillas">
-                            <option value="vyv_1">🚀 Imagen</option>
-                            <option value="promo_video_nxai">🎥 Video</option>
-                             <option value="presentacion_3cx_pdf">📄Documento</option>
-                            <option value="nxai_cta_web_v1">🌐 CTA Web</option>
-                            <option value="nxai_cta_phone_v1">📞 CTA Phone</option>
-                            <option value="nxai_solutions_v4">🎠 Carrusel</option>
-                            <option value="nxai_interactivo_v1">🔘Botones</option>                           
-                            <option value="tpl_generic">📝 Personalizado (Manual)</option>
+                        <optgroup label="Apertura (HSM Templates)">
+                            <option value="vyv_1">🚀 vyv_1 (Imagen + 3 Vars)</option>
+                            <option value="promo_video_nxai">🎥 promo_video_nxai (Video)</option>
+                            <option value="nxai_cta_web_v1">🌐 nxai_cta_web_v1 (CTA Web)</option>
+                            <option value="nxai_cta_phone_v1">📞 nxai_cta_phone_v1 (CTA Phone)</option>
+                            <option value="nxai_solutions_v4">Carousel: nxai_solutions_v4</option>
+                            <option value="nxai_interactivo_v1">🔘 nxai_interactivo_v1 (Quick Buttons)</option>
+                            <option value="presentacion_3cx_pdf">📄 presentacion_3cx_pdf (Documento)</option>
+                            <option value="tpl_generic">📝 Plantilla Manual (JSON)</option>
                         </optgroup>
-                        <optgroup label="Sesión (Abierta)">
+                        <optgroup label="Sesión (Conversación Abierta)">
                             <option value="text">💬 Solo Texto</option>
-                            <option value="image">🖼️ Imagen con Link</option>
-                            <option value="document">📄 PDF con Link</option>
+                            <option value="image">🖼️ Imagen (URL)</option>
+                            <option value="document">📄 PDF (URL)</option>
+                            <option value="video_session">🎥 Video (ID FB)</option>
+                            <option value="audio_session">🎵 Audio (ID FB)</option>
                         </optgroup>
                     </select>
 
                     <div id="content-fields" class="space-y-4">
                         <div id="group-template" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Nombre Técnico</label>
-                            <input type="text" id="tplName" class="w-full p-4 text-sm font-mono" placeholder="nombre_plantilla_meta">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Nombre de la Plantilla</label>
+                            <input type="text" id="tplName" class="w-full p-4 text-sm font-mono" placeholder="ej: mi_template_v1">
                         </div>
 
                         <div id="group-media">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">URL de Multimedia</label>
-                            <input type="url" id="mediaUrl" oninput="updatePreview()" class="w-full p-4 text-xs" placeholder="https://..." value="https://i.postimg.cc/W3D7tWCX/logo.png">
+                            <label id="label-media" class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">URL o ID de Multimedia</label>
+                            <input type="text" id="mediaUrl" oninput="updatePreview()" class="w-full p-4 text-xs font-mono" placeholder="https:// o ID de Facebook">
                         </div>
 
                         <div id="group-text" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Mensaje de Sesión</label>
+                            <label id="label-body" class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Cuerpo / Caption</label>
                             <textarea id="body" rows="3" oninput="updatePreview()" class="w-full p-4 text-sm" placeholder="Usa {{name}} para personalizar"></textarea>
                         </div>
 
                         <div id="vars-container" class="space-y-3"></div>
                     </div>
 
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-[1.02]">
-                        <i class="bi bi-lightning-fill"></i> Ejecutar Transmisión
+                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all active:scale-95">
+                        <i class="bi bi-lightning-fill mr-2"></i> Transmitir Ahora
                     </button>
                 </div>
             </div>
 
             <div class="lg:col-span-4">
                 <div class="sticky top-10">
-                    <h2 class="text-center text-[10px] font-black text-slate-500 uppercase mb-6 italic tracking-widest">WhatsApp Sender</h2>
+                    <h2 class="text-center text-[10px] font-black text-slate-500 uppercase mb-6 italic tracking-widest">Vista Previa del Dispositivo</h2>
                     <div class="wa-chat-bg">
                         <div class="wa-bubble">
                             <div id="preview-media" class="wa-media-box"></div>
@@ -153,12 +155,12 @@
             <div class="lg:col-span-4">
                 <div class="glass-card p-8 h-[700px] flex flex-col">
                     <h2 class="text-sm font-black text-blue-400 uppercase mb-6 italic flex items-center gap-2">
-                        <i class="bi bi-terminal"></i> Estado de Envío
+                        <i class="bi bi-terminal"></i> Salida de Consola
                     </h2>
                     <div id="logs" class="flex-grow space-y-4 overflow-y-auto pr-2 custom-scroll">
-                        <div class="text-center py-20 opacity-10 italic">
-                            <i class="bi bi-cpu text-6xl block mb-4"></i>
-                            <p class="font-mono text-sm uppercase">Esperando...</p>
+                        <div class="text-center py-20 opacity-10">
+                            <i class="bi bi-broadcast text-6xl block mb-4"></i>
+                            <p class="font-mono text-sm uppercase italic">Esperando acción...</p>
                         </div>
                     </div>
                 </div>
@@ -171,18 +173,20 @@
         let currentMode = 'individual';
         let iti;
 
-        // Diccionario Maestro de Estructuras
+        // Configuración Maestra de Plantillas y Sesiones
         const MASTER_CONFIG = {
             'vyv_1': { header: 'image', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
-            'promo_video_nxai': { header: 'video', vars: ['Nombre'], text: "Hola {{1}}, ¡mira este video exclusivo de nuestras soluciones!", btns: ['Solicitar Demo'] },
-            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más sobre nuestra suite en la web.", btns: ['🌐 Visitar Sitio'] },
-            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada directa?", btns: ['📞 Llamar Ahora'] },
-            'nxai_solutions_v4': { header: 'image', vars: ['Nombre'], text: "Hola {{1}}, descubre nuestras soluciones modulares.", btns: ['Ver Soluciones', 'Cotizar'] },
-            'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Deseas que un asesor técnico te contacte, {{1}}?", btns: ['Sí, contactar', 'No por ahora'] },
-            'presentacion_3cx_pdf': { header: 'document', vars: ['Nombre'], text: "Hola {{1}}, te envío la presentación técnica de 3CX.", btns: ['Descargar PDF'] },
+            'promo_video_nxai': { header: 'video', vars: ['Nombre'], text: "Hola {{1}}, ¡mira este video exclusivo de nuestras soluciones!", btns: ['Agendar Demo'] },
+            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, visita nuestra web para conocer más detalles.", btns: ['🌐 Ir al Sitio'] },
+            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una atención telefónica directa?", btns: ['📞 Llamar Ahora'] },
+            'nxai_solutions_v4': { header: 'image', vars: ['Nombre'], text: "Explora nuestro portafolio de soluciones, {{1}}.", btns: ['Ver Catálogo', 'Hablar con Asesor'] },
+            'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Deseas que un especialista te contacte hoy mismo, {{1}}?", btns: ['Sí, por favor', 'No por ahora'] },
+            'presentacion_3cx_pdf': { header: 'document', vars: ['Nombre'], text: "Hola {{1}}, te adjunto la presentación técnica de 3CX.", btns: ['Descargar PDF'] },
             'text': { header: null, isSession: true },
             'image': { header: 'image', isSession: true },
-            'document': { header: 'document', isSession: true }
+            'document': { header: 'document', isSession: true },
+            'video_session': { header: 'video', isSession: true, useId: true, caption: "Instalar extensión NXLink" },
+            'audio_session': { header: 'audio', isSession: true, useId: true }
         };
 
         window.onload = () => {
@@ -208,6 +212,26 @@
             document.getElementById('group-media').classList.toggle('hidden', !config.header);
             document.getElementById('group-text').classList.toggle('hidden', !config.isSession && type !== 'tpl_generic');
             
+            // Ajuste de Etiquetas Dinámicas
+            const labelMedia = document.getElementById('label-media');
+            const labelBody = document.getElementById('label-body');
+            const mediaInput = document.getElementById('mediaUrl');
+
+            if (config.useId) {
+                labelMedia.innerText = "ID de Facebook (Media ID)";
+                mediaInput.placeholder = "ej: 929780379973389";
+                if(type === 'video_session') {
+                    document.getElementById('group-text').classList.remove('hidden');
+                    labelBody.innerText = "Caption del Video";
+                    document.getElementById('body').value = config.caption || "";
+                }
+            } else {
+                labelMedia.innerText = "URL de Multimedia";
+                mediaInput.placeholder = "https://...";
+                labelBody.innerText = "Cuerpo del Mensaje";
+            }
+            
+            // Generador de Variables para Plantillas
             const varsContainer = document.getElementById('vars-container');
             varsContainer.innerHTML = '';
             if (config.vars) {
@@ -225,20 +249,20 @@
             const pMedia = document.getElementById('preview-media');
             const pText = document.getElementById('preview-text');
             const pBtns = document.getElementById('preview-btns');
-            const mUrl = document.getElementById('mediaUrl').value;
+            const mVal = document.getElementById('mediaUrl').value;
 
-            // 1. Preview de Media
+            // Media
             if (config.header) {
                 pMedia.style.display = 'flex';
-                if ((config.header === 'image' || type === 'image') && mUrl) {
-                    pMedia.innerHTML = `<img src="${mUrl}" class="w-full h-full object-cover">`;
+                if ((config.header === 'image' || type === 'image') && mVal.startsWith('http')) {
+                    pMedia.innerHTML = `<img src="${mVal}" class="w-full h-full object-cover">`;
                 } else {
-                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic">[${config.header.toUpperCase()}]</div>`;
+                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">📎 [${config.header.toUpperCase()}]<br><span class="text-[8px] font-mono">${mVal || 'Esperando...'}</span></div>`;
                 }
             } else { pMedia.style.display = 'none'; }
 
-            // 2. Preview de Texto
-            let textContent = config.isSession ? (document.getElementById('body').value || "Escribiendo...") : (config.text || "");
+            // Texto
+            let textContent = config.isSession ? (document.getElementById('body').value || "Mensaje...") : (config.text || "");
             if (config.vars) {
                 config.vars.forEach((_, i) => {
                     const val = document.getElementById(`v_${i+1}`)?.value || `{{${i+1}}}`;
@@ -247,12 +271,10 @@
             }
             pText.innerHTML = textContent.replace('{{name}}', '<span class="wa-variable">Cliente</span>');
 
-            // 3. Preview de Botones
+            // Botones
             pBtns.innerHTML = '';
             if (config.btns) {
-                config.btns.forEach(b => {
-                    pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`;
-                });
+                config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
             }
         }
 
@@ -279,12 +301,15 @@
             }
 
             document.getElementById('logs').innerHTML = '';
-            let success = 0;
+            let ok = 0;
 
             for (let c of contacts) {
                 renderLog(c.phone, 'Transmitiendo...');
                 try {
-                    let payload = { to: c.phone, type: (type === 'text' || type === 'image' || type === 'document') ? type : 'template' };
+                    let payload = { 
+                        to: c.phone, 
+                        type: (type === 'text' || type === 'image' || type === 'document' || type === 'video_session' || type === 'audio_session') ? type.replace('_session', '') : 'template' 
+                    };
                     
                     if (payload.type === 'template') {
                         payload.templateName = type === 'tpl_generic' ? document.getElementById('tplName').value : type;
@@ -298,9 +323,16 @@
                         }
                         if (config.header) {
                             payload.header = { type: config.header, link: document.getElementById('mediaUrl').value };
-                            if (config.header === 'document') payload.header.filename = "Info_NXAI.pdf";
+                            if (config.header === 'document') payload.header.filename = "NXAI_Document.pdf";
+                        }
+                    } else if (config.useId) {
+                        // Estructura de Audio/Video con ID (Sesión)
+                        payload[payload.type] = { id: document.getElementById('mediaUrl').value };
+                        if (payload.type === 'video') {
+                            payload[payload.type].caption = document.getElementById('body').value;
                         }
                     } else {
+                        // Estructura de Texto/Imagen/Doc Estándar
                         if (type === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
                         else payload.mediaUrl = document.getElementById('mediaUrl').value;
                     }
@@ -313,14 +345,14 @@
 
                     const resJson = await res.json();
                     if (resJson.code === 0) {
-                        success++;
+                        ok++;
                         updateLog(c.phone, 'Éxito', 'success', 'bi-check2-all');
                     } else {
                         updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
                     }
-                } catch (e) { updateLog(c.phone, 'Error Red', 'error', 'bi-wifi-off'); }
+                } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
                 
-                document.getElementById('counter').innerText = `${success}/${contacts.length} OK`;
+                document.getElementById('counter').innerText = `${ok}/${contacts.length} TRANSMITTED`;
             }
             btn.disabled = false;
         }
@@ -331,7 +363,7 @@
             div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 mb-3 animate-pulse';
             div.innerHTML = `<div class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] text-blue-400 font-bold">${phone.slice(-4)}</div>
-                <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 font-mono uppercase italic">${msg}</p></div>
+                <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 uppercase font-mono italic">${msg}</p></div>
             </div><div id="badge-${phone}" class="status-pill status-waiting">SENDING</div>`;
             document.getElementById('logs').prepend(div);
         }
