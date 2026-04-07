@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXAI | Enterprise WhatsApp Suite</title>
+    <title>NXAI | WhatsApp Sendero</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -16,7 +16,7 @@
     <style>
         body { font-family: 'Outfit', sans-serif; background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; }
         .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; transition: all 0.4s ease; }
-        .glass-card:hover { border-color: #38bdf8; background: rgba(255, 255, 255, 0.04); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .glass-card:hover { border-color: #38bdf8; background: rgba(255, 255, 255, 0.04); }
         .gradient-btn { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
         .iti { width: 100%; }
         input, select, textarea { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; border-radius: 14px !important; }
@@ -26,7 +26,6 @@
         .status-error { background: #7f1d1d; color: #f87171; }
         .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
         
-        /* WhatsApp Simulator */
         .wa-chat-bg { background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover; border-radius: 24px; padding: 20px; border: 6px solid #0f172a; width: 100%; max-width: 340px; margin: 0 auto; }
         .wa-bubble { background: white; border-radius: 0 15px 15px 15px; padding: 10px; color: #333; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 1px rgba(0,0,0,0.2); }
         .wa-media-box { width: 100%; border-radius: 10px; margin-bottom: 8px; overflow: hidden; background: #eee; display: flex; align-items: center; justify-content: center; min-height: 120px; }
@@ -41,26 +40,21 @@
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                    <span class="text-blue-600 font-black text-3xl">NX</span>
+                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center">
+                    <span class="text-blue-600 font-black text-3xl">NXAI</span>
                 </div>
                 <div>
-                    <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">AI</span> Studio</h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Enterprise Messaging HUB</p>
+                    <h1 class="text-4xl font-extrabold tracking-tight italic">NX<span class="text-blue-400 not-italic">NXAI</span> Wa Sender</h1>
+                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">Core de Transmisión Demo</p>
                 </div>
             </div>
             <div class="flex gap-4 items-center glass-card px-6 py-3">
                 <div class="text-right">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase italic">Status Motor</p>
-                    <p id="counter" class="text-white font-mono text-lg italic font-black">IDLE</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">Estado</p>
+                    <p id="counter" class="text-white font-mono text-lg italic font-black">READY</p>
                 </div>
                 <div class="h-8 w-[1px] bg-slate-700"></div>
-                <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span> API ONLINE
-                </div>
+                <div class="text-green-400 font-bold text-sm uppercase">Demo Activa</div>
             </div>
         </header>
 
@@ -69,11 +63,11 @@
                 <div class="glass-card p-8">
                     <div class="grid grid-cols-2 gap-4 mb-8">
                         <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center type-active">
-                            <i class="bi bi-phone text-2xl mb-1 block"></i>
+                            <i class="bi bi-person-check text-2xl mb-1 block"></i>
                             <span class="text-[10px] font-bold uppercase">Individual</span>
                         </button>
                         <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-4 text-center opacity-50">
-                            <i class="bi bi-layers text-2xl mb-1 block"></i>
+                            <i class="bi bi-stack text-2xl mb-1 block"></i>
                             <span class="text-[10px] font-bold uppercase">Masivo</span>
                         </button>
                     </div>
@@ -86,62 +80,53 @@
                     <div id="bulk-target" class="mb-6 hidden">
                         <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
                             <input type="file" id="file" class="hidden" accept=".xlsx, .xls">
-                            <i class="bi bi-file-earmark-spreadsheet text-2xl text-slate-500 mb-2 block"></i>
-                            <p id="file-name" class="text-xs text-slate-400 italic font-mono uppercase">Subir Base de Datos</p>
+                            <p id="file-name" class="text-xs text-slate-400 italic font-mono uppercase">Cargar Excel</p>
                         </div>
                     </div>
 
-                    <div class="h-[1px] bg-slate-800 my-8"></div>
-
-                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Seleccionar Mensaje</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Contenido de Demo</label>
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Apertura (HSM Templates)">
-                            <option value="vyv_1">🚀 vyv_1 (Imagen + 3 Vars)</option>
-                            <option value="promo_video_nxai">🎥 promo_video_nxai (Video)</option>
-                            <option value="nxai_cta_web_v1">🌐 nxai_cta_web_v1 (CTA Web)</option>
-                            <option value="nxai_cta_phone_v1">📞 nxai_cta_phone_v1 (CTA Phone)</option>
-                            <option value="nxai_solutions_v4">Carousel: nxai_solutions_v4</option>
-                            <option value="nxai_interactivo_v1">🔘 nxai_interactivo_v1 (Quick Buttons)</option>
-                            <option value="presentacion_3cx_pdf">📄 presentacion_3cx_pdf (Documento)</option>
-                            <option value="tpl_generic">📝 Plantilla Manual (JSON)</option>
+                        <optgroup label="Apertura (Automatizada)">
+                            <option value="vyv_1">🚀 Plantilla de Imagen</option>
+                            <option value="promo_video_nxai">🎥 Plantilla de Video</option>
+                            <option value="nxai_cta_web_v1">🌐 Plantilla CTA Web</option>
+                            <option value="nxai_cta_phone_v1">📞 Plantilla CTA Phone</option>
+                            <option value="nxai_solutions_v4">🎠 Plantilla Carrusel)</option>
+                            <option value="nxai_interactivo_v1">🔘 Plantilla Quick Buttons</option>
+                            <option value="presentacion_3cx_pdf">📄 Plantilla Documento</option>
                         </optgroup>
                         <optgroup label="Sesión (Conversación Abierta)">
-                            <option value="text">💬 Solo Texto</option>
-                            <option value="image">🖼️ Imagen (URL)</option>
-                            <option value="document">📄 PDF (URL)</option>
-                            <option value="video_session">🎥 Video (ID FB)</option>
-                            <option value="audio_session">🎵 Audio (ID FB)</option>
+                            <option value="text">💬 Mensaje de Texto</option>
+                            <option value="image">🖼️ Imagen</option>
+                            <option value="document">📄 Documento PDF</option>
+                            <option value="video_session">🎥 Video</option>
+                            <option value="audio_session">🎵 Audio</option>
                         </optgroup>
                     </select>
 
                     <div id="content-fields" class="space-y-4">
-                        <div id="group-template" class="hidden">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Nombre de la Plantilla</label>
-                            <input type="text" id="tplName" class="w-full p-4 text-sm font-mono" placeholder="ej: mi_template_v1">
-                        </div>
-
-                        <div id="group-media">
-                            <label id="label-media" class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">URL o ID de Multimedia</label>
-                            <input type="text" id="mediaUrl" oninput="updatePreview()" class="w-full p-4 text-xs font-mono" placeholder="https:// o ID de Facebook">
+                        <div id="group-media" class="hidden">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Media URL/ID</label>
+                            <input type="text" id="mediaUrl" oninput="updatePreview()" class="w-full p-4 text-xs font-mono">
                         </div>
 
                         <div id="group-text" class="hidden">
-                            <label id="label-body" class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Cuerpo / Caption</label>
-                            <textarea id="body" rows="3" oninput="updatePreview()" class="w-full p-4 text-sm" placeholder="Usa {{name}} para personalizar"></textarea>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Cuerpo del Mensaje</label>
+                            <textarea id="body" rows="3" oninput="updatePreview()" class="w-full p-4 text-sm" placeholder="Escribe aquí..."></textarea>
                         </div>
 
                         <div id="vars-container" class="space-y-3"></div>
                     </div>
 
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all active:scale-95">
-                        <i class="bi bi-lightning-fill mr-2"></i> Transmitir Ahora
+                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest">
+                        Enviar
                     </button>
                 </div>
             </div>
 
             <div class="lg:col-span-4">
                 <div class="sticky top-10">
-                    <h2 class="text-center text-[10px] font-black text-slate-500 uppercase mb-6 italic tracking-widest">Vista Previa del Dispositivo</h2>
+                    <h2 class="text-center text-[10px] font-black text-slate-500 uppercase mb-6 italic">Vista previa del mensaje</h2>
                     <div class="wa-chat-bg">
                         <div class="wa-bubble">
                             <div id="preview-media" class="wa-media-box"></div>
@@ -153,15 +138,10 @@
             </div>
 
             <div class="lg:col-span-4">
-                <div class="glass-card p-8 h-[700px] flex flex-col">
-                    <h2 class="text-sm font-black text-blue-400 uppercase mb-6 italic flex items-center gap-2">
-                        <i class="bi bi-terminal"></i> Salida de Consola
-                    </h2>
+                <div class="glass-card p-8 h-[650px] flex flex-col">
+                    <h2 class="text-sm font-black text-blue-400 uppercase mb-6 italic tracking-widest">Monitor de Envío</h2>
                     <div id="logs" class="flex-grow space-y-4 overflow-y-auto pr-2 custom-scroll">
-                        <div class="text-center py-20 opacity-10">
-                            <i class="bi bi-broadcast text-6xl block mb-4"></i>
-                            <p class="font-mono text-sm uppercase italic">Esperando acción...</p>
-                        </div>
+                        <p class="text-[10px] font-mono text-slate-600 italic">SISTEMA INICIALIZADO...</p>
                     </div>
                 </div>
             </div>
@@ -173,71 +153,52 @@
         let currentMode = 'individual';
         let iti;
 
-        // Configuración Maestra de Plantillas y Sesiones
+        // CONFIGURACIÓN MAESTRA CON URLs Y IDs HARDCODED
         const MASTER_CONFIG = {
-            'vyv_1': { header: 'image', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
-            'promo_video_nxai': { header: 'video', vars: ['Nombre'], text: "Hola {{1}}, ¡mira este video exclusivo de nuestras soluciones!", btns: ['Agendar Demo'] },
-            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, visita nuestra web para conocer más detalles.", btns: ['🌐 Ir al Sitio'] },
-            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una atención telefónica directa?", btns: ['📞 Llamar Ahora'] },
-            'nxai_solutions_v4': { header: 'image', vars: ['Nombre'], text: "Explora nuestro portafolio de soluciones, {{1}}.", btns: ['Ver Catálogo', 'Hablar con Asesor'] },
-            'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Deseas que un especialista te contacte hoy mismo, {{1}}?", btns: ['Sí, por favor', 'No por ahora'] },
-            'presentacion_3cx_pdf': { header: 'document', vars: ['Nombre'], text: "Hola {{1}}, te adjunto la presentación técnica de 3CX.", btns: ['Descargar PDF'] },
+            'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
+            'promo_video_nxai': { header: 'video', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, mira este video exclusivo de nuestras soluciones.", btns: ['Soporte'] },
+            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, visita nuestra web para más detalles.", btns: ['🌐 Ir al Sitio'] },
+            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres hablar? Llámanos ahora.", btns: ['📞 Llamar'] },
+            'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, descubre nuestras soluciones.", btns: ['Ver Más', 'Cotizar'] },
+            'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Deseas que un asesor te contacte, {{1}}?", btns: ['Sí', 'No'] },
+            'presentacion_3cx_pdf': { header: 'document', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, adjunto el brochure de 3CX.", btns: ['Descargar'] },
             'text': { header: null, isSession: true },
-            'image': { header: 'image', isSession: true },
-            'document': { header: 'document', isSession: true },
-            'video_session': { header: 'video', isSession: true, useId: true, caption: "Instalar extensión NXLink" },
-            'audio_session': { header: 'audio', isSession: true, useId: true }
+            'image': { header: 'image', isSession: true, mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png' },
+            'document': { header: 'document', isSession: true, mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png' },
+            'video_session': { header: 'video', isSession: true, id: '929780379973389', caption: "Instalar extensión NXLink" },
+            'audio_session': { header: 'audio', isSession: true, id: '2368122460364431' }
         };
 
         window.onload = () => {
-            iti = window.intlTelInput(document.querySelector("#phone"), { initialCountry: "pe", separateDialCode: true });
+            iti = window.intlTelInput(document.querySelector("#phone"), { initialCountry: "pe", separateDialCode: true, utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js" });
             toggleContentFields();
         };
 
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('ind-target').classList.toggle('hidden', mode !== 'individual');
-            document.getElementById('bulk-target').classList.toggle('hidden', mode === 'individual');
-            document.getElementById('btn-mode-ind').classList.toggle('type-active', mode === 'individual');
-            document.getElementById('btn-mode-bulk').classList.toggle('type-active', mode === 'bulk');
-            document.getElementById('btn-mode-ind').style.opacity = mode === 'individual' ? '1' : '0.5';
-            document.getElementById('btn-mode-bulk').style.opacity = mode === 'bulk' ? '1' : '0.5';
+        function setMode(m) {
+            currentMode = m;
+            document.getElementById('ind-target').classList.toggle('hidden', m !== 'individual');
+            document.getElementById('bulk-target').classList.toggle('hidden', m === 'individual');
+            document.getElementById('btn-mode-ind').classList.toggle('type-active', m === 'individual');
+            document.getElementById('btn-mode-bulk').classList.toggle('type-active', m === 'bulk');
         }
 
         function toggleContentFields() {
             const type = document.getElementById('msgType').value;
             const config = MASTER_CONFIG[type] || {};
             
-            document.getElementById('group-template').classList.toggle('hidden', type !== 'tpl_generic');
-            document.getElementById('group-media').classList.toggle('hidden', !config.header);
-            document.getElementById('group-text').classList.toggle('hidden', !config.isSession && type !== 'tpl_generic');
+            // Ocultar mediaUrl si ya está hardcoded en el config
+            document.getElementById('group-media').classList.toggle('hidden', !!config.mediaUrl || !!config.id || !config.header);
+            document.getElementById('group-text').classList.toggle('hidden', !config.isSession || type.includes('session'));
             
-            // Ajuste de Etiquetas Dinámicas
-            const labelMedia = document.getElementById('label-media');
-            const labelBody = document.getElementById('label-body');
-            const mediaInput = document.getElementById('mediaUrl');
+            if (config.mediaUrl) document.getElementById('mediaUrl').value = config.mediaUrl;
+            if (config.id) document.getElementById('mediaUrl').value = config.id;
 
-            if (config.useId) {
-                labelMedia.innerText = "ID de Facebook (Media ID)";
-                mediaInput.placeholder = "ej: 929780379973389";
-                if(type === 'video_session') {
-                    document.getElementById('group-text').classList.remove('hidden');
-                    labelBody.innerText = "Caption del Video";
-                    document.getElementById('body').value = config.caption || "";
-                }
-            } else {
-                labelMedia.innerText = "URL de Multimedia";
-                mediaInput.placeholder = "https://...";
-                labelBody.innerText = "Cuerpo del Mensaje";
-            }
-            
-            // Generador de Variables para Plantillas
             const varsContainer = document.getElementById('vars-container');
             varsContainer.innerHTML = '';
             if (config.vars) {
                 config.vars.forEach((v, i) => {
-                    varsContainer.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1 uppercase font-black tracking-widest">${v}</label>
-                    <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs" placeholder="Variable {{${i+1}}}"></div>`;
+                    varsContainer.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1 uppercase font-black">${v}</label>
+                    <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs" placeholder="Valor p/ {{${i+1}}}"></div>`;
                 });
             }
             updatePreview();
@@ -249,29 +210,27 @@
             const pMedia = document.getElementById('preview-media');
             const pText = document.getElementById('preview-text');
             const pBtns = document.getElementById('preview-btns');
-            const mVal = document.getElementById('mediaUrl').value;
+            const mVal = document.getElementById('mediaUrl').value || config.mediaUrl || config.id;
 
-            // Media
             if (config.header) {
                 pMedia.style.display = 'flex';
-                if ((config.header === 'image' || type === 'image') && mVal.startsWith('http')) {
+                if ((config.header === 'image') && mVal && mVal.startsWith('http')) {
                     pMedia.innerHTML = `<img src="${mVal}" class="w-full h-full object-cover">`;
                 } else {
-                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">📎 [${config.header.toUpperCase()}]<br><span class="text-[8px] font-mono">${mVal || 'Esperando...'}</span></div>`;
+                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic">[${config.header}]</div>`;
                 }
             } else { pMedia.style.display = 'none'; }
 
-            // Texto
-            let textContent = config.isSession ? (document.getElementById('body').value || "Mensaje...") : (config.text || "");
+            let content = config.isSession ? (document.getElementById('body').value || "Mensaje de demo...") : (config.text || "");
             if (config.vars) {
                 config.vars.forEach((_, i) => {
                     const val = document.getElementById(`v_${i+1}`)?.value || `{{${i+1}}}`;
-                    textContent = textContent.replace(`{{${i+1}}}`, `<span class="wa-variable">${val}</span>`);
+                    content = content.replace(`{{${i+1}}}`, `<span class="wa-variable">${val}</span>`);
                 });
             }
-            pText.innerHTML = textContent.replace('{{name}}', '<span class="wa-variable">Cliente</span>');
+            if (type === 'video_session') content = config.caption;
+            pText.innerHTML = content.replace('{{name}}', '<span class="wa-variable">Cliente</span>');
 
-            // Botones
             pBtns.innerHTML = '';
             if (config.btns) {
                 config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
@@ -286,12 +245,12 @@
             let contacts = [];
 
             if (currentMode === 'individual') {
-                const fullNum = iti.getNumber();
-                if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
-                contacts.push({ phone: fullNum.replace('+', ''), name: 'Cliente' });
+                const full = iti.getNumber();
+                if (!full || full.length < 8) { alert("Número inválido"); btn.disabled = false; return; }
+                contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
             } else {
                 const f = document.getElementById('file').files[0];
-                if (!f) { alert("Sube un Excel"); btn.disabled = false; return; }
+                if (!f) { alert("Sube el Excel"); btn.disabled = false; return; }
                 const data = await f.arrayBuffer();
                 const workbook = XLSX.read(data);
                 contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
@@ -301,40 +260,32 @@
             }
 
             document.getElementById('logs').innerHTML = '';
-            let ok = 0;
+            let success = 0;
 
             for (let c of contacts) {
-                renderLog(c.phone, 'Transmitiendo...');
+                renderLog(c.phone, 'Enviando...');
                 try {
-                    let payload = { 
-                        to: c.phone, 
-                        type: (type === 'text' || type === 'image' || type === 'document' || type === 'video_session' || type === 'audio_session') ? type.replace('_session', '') : 'template' 
-                    };
+                    let payload = { to: c.phone, type: (type.includes('session') || type === 'text' || type === 'image' || type === 'document') ? type.replace('_session','') : 'template' };
                     
                     if (payload.type === 'template') {
-                        payload.templateName = type === 'tpl_generic' ? document.getElementById('tplName').value : type;
+                        payload.templateName = type;
                         payload.vars = [];
                         if (config.vars) {
                             config.vars.forEach((_, i) => {
-                                let val = document.getElementById(`v_${i+1}`).value;
-                                if (i === 0 && !val) val = c.name;
-                                payload.vars.push(val);
+                                let v = document.getElementById(`v_${i+1}`).value || `Valor_${i+1}`;
+                                if (i === 0 && !document.getElementById(`v_${i+1}`).value) v = c.name;
+                                payload.vars.push(v);
                             });
                         }
                         if (config.header) {
-                            payload.header = { type: config.header, link: document.getElementById('mediaUrl').value };
-                            if (config.header === 'document') payload.header.filename = "NXAI_Document.pdf";
+                            payload.header = { type: config.header, link: config.mediaUrl };
                         }
-                    } else if (config.useId) {
-                        // Estructura de Audio/Video con ID (Sesión)
-                        payload[payload.type] = { id: document.getElementById('mediaUrl').value };
-                        if (payload.type === 'video') {
-                            payload[payload.type].caption = document.getElementById('body').value;
-                        }
+                    } else if (config.id) {
+                        payload[payload.type] = { id: config.id };
+                        if (type === 'video_session') payload[payload.type].caption = config.caption;
                     } else {
-                        // Estructura de Texto/Imagen/Doc Estándar
                         if (type === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
-                        else payload.mediaUrl = document.getElementById('mediaUrl').value;
+                        else payload.mediaUrl = document.getElementById('mediaUrl').value || config.mediaUrl;
                     }
 
                     const res = await fetch(WORKER_URL, {
@@ -343,16 +294,16 @@
                         body: JSON.stringify(payload)
                     });
 
-                    const resJson = await res.json();
-                    if (resJson.code === 0) {
-                        ok++;
-                        updateLog(c.phone, 'Éxito', 'success', 'bi-check2-all');
+                    const data = await res.json();
+                    if (data.code === 0) {
+                        success++;
+                        updateLog(c.phone, 'ENTREGADO', 'success', 'bi-check2-all');
                     } else {
-                        updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
+                        updateLog(c.phone, data.message || 'Error API', 'error', 'bi-x-circle');
                     }
                 } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
                 
-                document.getElementById('counter').innerText = `${ok}/${contacts.length} TRANSMITTED`;
+                document.getElementById('counter').innerText = `${success}/${contacts.length} OK`;
             }
             btn.disabled = false;
         }
@@ -364,7 +315,7 @@
             div.innerHTML = `<div class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] text-blue-400 font-bold">${phone.slice(-4)}</div>
                 <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 uppercase font-mono italic">${msg}</p></div>
-            </div><div id="badge-${phone}" class="status-pill status-waiting">SENDING</div>`;
+            </div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
             document.getElementById('logs').prepend(div);
         }
 
