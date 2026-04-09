@@ -93,6 +93,7 @@
                     <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Plantillas Disponibles</label>
                     <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
                         <optgroup label="Apertura (Fuera de ventana)">
+                            <option value="soporte_nxai_v1">🛠️ Plantilla Utility</option>
                             <option value="vyv_1">🚀 Plantilla de imagen</option>
                             <option value="promo_video_nxai">🎥 Plantilla de Video</option>
                             <option value="nxai_cta_web_v1">🌐 Plantilla CTA Web</option>
@@ -103,7 +104,7 @@
                         </optgroup>
                         <optgroup label="Sesión (Dentro de ventana de conversación)">
                             <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image">🖼️ Imagen</option>
+                            <option value="image_free">🖼️ Imagen</option>
                             <option value="document">📄 Documento PDF</option>
                             <option value="video_session">🎥 Video</option>
                             <option value="audio_session">🎵 Audio</option>
@@ -159,17 +160,17 @@
         let currentMode = 'individual';
         let iti;
 
-        // DICCIONARIO MAESTRO ACTUALIZADO CON TUS IDs Y URLs PROBADOS
         const MASTER_CONFIG = {
+            'soporte_nxai_v1': { header: null, vars: ['Nombre Cliente', 'Departamento', 'Ticket ID'], text: "Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.", btns: ['Ver Estado'] },
             'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
             'promo_video_nxai': { header: 'video', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, ¡mira este video exclusivo!", btns: ['Solicitar'] },
-            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más en nuestra web.", btns: ['🌐 Ir a Web'] },
-            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada?", btns: ['📞 Llamar Ahora'] },
-            'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, estas son nuestras soluciones.", btns: ['Ver Demo', 'Hablar con Asesor'] },
+            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más en nuestra web.", btns: ['Ir a Web'] },
+            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada?", btns: ['Llamar Ahora'] },
+            'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, estas son nuestras soluciones.", btns: ['Ver Demo', 'Asesor'] },
             'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Quieres que te contactemos, {{1}}?", btns: ['Sí', 'No'] },
             'presentacion_3cx_pdf': { header: 'document', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, adjunto el PDF de 3CX.", btns: ['Descargar Brochure'] },
             'text': { header: null, isSession: true },
-            'image': { header: 'image', isSession: true, mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', noCaption: true },
+            'image_free': { header: 'image', isSession: true, id: '1249420694060125', caption: "image test", isFreeMedia: true },
             'document': { header: 'document', isSession: true, id: '4393679207510947', filename: 'NXAI-VyV' },
             'video_session': { header: 'video', isSession: true, id: '929780379973389', caption: "Instalar extensión NXLink" },
             'audio_session': { header: 'audio', isSession: true, id: '2368122460364431' }
@@ -195,16 +196,13 @@
         function toggleContentFields() {
             const type = document.getElementById('msgType').value;
             const config = MASTER_CONFIG[type] || {};
-            
-            // Lógica de visibilidad de campos
             const groupText = document.getElementById('group-text');
             const labelBody = document.getElementById('label-body');
             
-            // Solo mostramos el cajón de texto si es Sesión de Texto o Video (para el caption)
-            groupText.classList.toggle('hidden', !config.isSession || config.noCaption || type === 'document' || type === 'audio_session');
+            groupText.classList.toggle('hidden', !config.isSession || (config.isFreeMedia && !config.caption) || type === 'document' || type === 'audio_session');
             
-            if (type === 'video_session') {
-                labelBody.innerText = "Caption del Video";
+            if (type === 'image_free' || type === 'video_session') {
+                labelBody.innerText = "Caption del Media";
                 document.getElementById('body').value = config.caption || "";
             } else {
                 labelBody.innerText = "Cuerpo del Mensaje";
@@ -228,22 +226,20 @@
             const pText = document.getElementById('preview-text');
             const pBtns = document.getElementById('preview-btns');
 
-            // Media Preview
-            if (config.header) {
+            if (config.header || config.isFreeMedia) {
                 pMedia.style.display = 'flex';
-                if (config.header === 'image') {
+                if (config.mediaUrl) {
                     pMedia.innerHTML = `<img src="${config.mediaUrl}" class="w-full h-full object-cover">`;
                 } else {
-                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">📎 [${config.header.toUpperCase()}]<br><span class="text-[8px] font-mono">${config.id || config.filename || 'READY'}</span></div>`;
+                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">📎 [${(config.header || 'IMAGE').toUpperCase()}]<br><span class="text-[8px] font-mono">${config.id || 'READY'}</span></div>`;
                 }
             } else { pMedia.style.display = 'none'; }
 
-            // Text Preview
             let content = "";
             if (config.isSession) {
                 if (type === 'text') content = document.getElementById('body').value || "Escribe tu mensaje...";
-                if (type === 'video_session') content = document.getElementById('body').value;
-                if (type === 'document') content = `<span class="italic text-slate-400">📄 ${config.filename}.pdf</span>`;
+                else if (config.isFreeMedia || type === 'video_session') content = document.getElementById('body').value || config.caption || "";
+                else if (type === 'document') content = `<span class="italic text-slate-400">📄 ${config.filename}.pdf</span>`;
             } else {
                 content = config.text || "";
                 if (config.vars) {
@@ -253,9 +249,8 @@
                     });
                 }
             }
-            pText.innerHTML = content.replace('{{name}}', '<span class="wa-variable">Cliente</span>');
+            pText.innerHTML = content;
 
-            // Buttons Preview
             pBtns.innerHTML = '';
             if (config.btns) {
                 config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
@@ -270,13 +265,12 @@
             let contacts = [];
 
             if (currentMode === 'individual') {
-                const num = document.getElementById('phone').value.replace(/\D/g, '');
                 const full = iti.getNumber();
-                if (num.length < 9) { alert("Ingresa un número válido de 9 dígitos"); btn.disabled = false; return; }
+                if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
                 contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
             } else {
                 const f = document.getElementById('file').files[0];
-                if (!f) { alert("Carga un archivo Excel"); btn.disabled = false; return; }
+                if (!f) { alert("Carga un Excel"); btn.disabled = false; return; }
                 const data = await f.arrayBuffer();
                 const workbook = XLSX.read(data);
                 contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
@@ -285,38 +279,27 @@
                 })).filter(c => c.phone.length >= 9);
             }
 
-            document.getElementById('logs').innerHTML = '';
-            let count = 0;
-
             for (let c of contacts) {
                 renderLog(c.phone, 'Transmitiendo...');
                 try {
-                    let payload = { 
-                        to: c.phone, 
-                        type: (type.includes('session') || type === 'text' || type === 'image' || type === 'document') ? type.replace('_session','') : 'template' 
-                    };
+                    let payload = { to: c.phone };
                     
-                    if (payload.type === 'template') {
-                        payload.templateName = type;
-                        payload.vars = [];
-                        if (config.vars) {
-                            config.vars.forEach((_, i) => {
-                                let v = document.getElementById(`v_${i+1}`).value || (i === 0 ? c.name : 'Info');
-                                payload.vars.push(v);
-                            });
+                    if (config.isSession) {
+                        payload.type = type === 'image_free' ? 'image' : type.replace('_session','');
+                        if (config.id) {
+                            payload[payload.type] = { id: config.id };
+                            if (payload.type === 'image' || payload.type === 'video') {
+                                payload[payload.type].caption = document.getElementById('body').value;
+                            }
+                            if (type === 'document') payload[payload.type].filename = config.filename;
+                        } else if (type === 'text') {
+                            payload.message = document.getElementById('body').value;
                         }
-                        if (config.header) {
-                            payload.header = { type: config.header, link: config.mediaUrl };
-                        }
-                    } else if (config.id) {
-                        // Estructura EXACTA según tus JSONs de Audio/Video/Documento
-                        payload[payload.type] = { id: config.id };
-                        if (type === 'video_session') payload[payload.type].caption = document.getElementById('body').value;
-                        if (type === 'document') payload[payload.type].filename = config.filename;
                     } else {
-                        // Texto o Imagen por URL
-                        if (type === 'text') payload.message = document.getElementById('body').value.replace('{{name}}', c.name);
-                        else payload.mediaUrl = config.mediaUrl;
+                        payload.type = 'template';
+                        payload.templateName = type;
+                        payload.vars = config.vars.map((_, i) => document.getElementById(`v_${i+1}`).value || (i === 0 ? c.name : 'Val'));
+                        if (config.header) payload.header = { type: config.header, link: config.mediaUrl };
                     }
 
                     const res = await fetch(WORKER_URL, {
@@ -326,15 +309,9 @@
                     });
 
                     const resJson = await res.json();
-                    if (resJson.code === 0) {
-                        count++;
-                        updateLog(c.phone, 'ÉXITO', 'success', 'bi-check2-all');
-                    } else {
-                        updateLog(c.phone, resJson.message || 'Error API', 'error', 'bi-x-circle');
-                    }
+                    if (resJson.code === 0) updateLog(c.phone, 'ÉXITO', 'success', 'bi-check2-all');
+                    else updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
                 } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
-                
-                document.getElementById('counter').innerText = `${count}/${contacts.length} OK`;
             }
             btn.disabled = false;
         }
