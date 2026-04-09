@@ -155,191 +155,208 @@
         </div>
     </div>
 
-    <script>
-        const WORKER_URL = 'https://nxlink-backend.ursus006.workers.dev';
-        let currentMode = 'individual';
-        let iti;
+<script>
+    const WORKER_URL = 'https://nxlink-backend.ursus006.workers.dev';
+    let currentMode = 'individual';
+    let iti;
 
-        const MASTER_CONFIG = {
-            'soporte_nxai_v1': { header: null, vars: ['Nombre Cliente', 'Departamento', 'Ticket ID'], text: "Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.", btns: ['Ver Estado'] },
-            'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
-            'promo_video_nxai': { header: 'video', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, ¡mira este video exclusivo!", btns: ['Solicitar'] },
-            'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más en nuestra web.", btns: ['Ir a Web'] },
-            'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada?", btns: ['Llamar Ahora'] },
-            'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, estas son nuestras soluciones.", btns: ['Ver Demo', 'Asesor'] },
-            'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Quieres que te contactemos, {{1}}?", btns: ['Sí', 'No'] },
-            'presentacion_3cx_pdf': { header: 'document', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, adjunto el PDF de 3CX.", btns: ['Descargar Brochure'] },
-            'text': { header: null, isSession: true },
-            'image_free': { header: 'image', isSession: true, id: '1249420694060125', caption: "image test", isFreeMedia: true },
-            'document': { header: 'document', isSession: true, id: '4393679207510947', filename: 'NXAI-VyV' },
-            'video_session': { header: 'video', isSession: true, id: '929780379973389', caption: "Instalar extensión NXLink" },
-            'audio_session': { header: 'audio', isSession: true, id: '2368122460364431' }
-        };
+    const MASTER_CONFIG = {
+        'soporte_nxai_v1': { header: null, vars: ['Nombre Cliente', 'Departamento', 'Ticket ID'], text: "Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.", btns: ['Ver Estado'] },
+        'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
+        // --- CAMBIO AQUÍ: Plantilla de Video configurada ---
+        'promo_video_nxai': { 
+            header: 'video', 
+            mediaUrl: 'https://pub-0b132dbccbaa45b8b000d404a2b4157a.r2.dev/Instalar_Extension.mp4', 
+            vars: ['Nombre'], 
+            text: "Hola {{1}}, ¡mira este video exclusivo!", 
+            btns: ['Solicitar'] 
+        },
+        'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más en nuestra web.", btns: ['Ir a Web'] },
+        'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada?", btns: ['Llamar Ahora'] },
+        'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, estas son nuestras soluciones.", btns: ['Ver Demo', 'Asesor'] },
+        'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Quieres que te contactemos, {{1}}?", btns: ['Sí', 'No'] },
+        'presentacion_3cx_pdf': { header: 'document', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, adjunto el PDF de 3CX.", btns: ['Descargar Brochure'] },
+        'text': { header: null, isSession: true },
+        'image_free': { header: 'image', isSession: true, id: '1249420694060125', caption: "image test", isFreeMedia: true },
+        'document': { header: 'document', isSession: true, id: '4393679207510947', filename: 'NXAI-VyV' },
+        'video_session': { header: 'video', isSession: true, id: '929780379973389', caption: "Instalar extensión NXLink" },
+        'audio_session': { header: 'audio', isSession: true, id: '2368122460364431' }
+    };
 
-        window.onload = () => {
-            iti = window.intlTelInput(document.querySelector("#phone"), { 
-                initialCountry: "pe", 
-                separateDialCode: true,
-                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js"
-            });
-            toggleContentFields();
-        };
+    window.onload = () => {
+        iti = window.intlTelInput(document.querySelector("#phone"), { 
+            initialCountry: "pe", 
+            separateDialCode: true,
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js"
+        });
+        toggleContentFields();
+    };
 
-        function setMode(m) {
-            currentMode = m;
-            document.getElementById('ind-target').classList.toggle('hidden', m !== 'individual');
-            document.getElementById('bulk-target').classList.toggle('hidden', m === 'individual');
-            document.getElementById('btn-mode-ind').classList.toggle('type-active', m === 'individual');
-            document.getElementById('btn-mode-bulk').classList.toggle('type-active', m === 'bulk');
+    function setMode(m) {
+        currentMode = m;
+        document.getElementById('ind-target').classList.toggle('hidden', m !== 'individual');
+        document.getElementById('bulk-target').classList.toggle('hidden', m === 'individual');
+        document.getElementById('btn-mode-ind').classList.toggle('type-active', m === 'individual');
+        document.getElementById('btn-mode-bulk').classList.toggle('type-active', m === 'bulk');
+    }
+
+    function toggleContentFields() {
+        const type = document.getElementById('msgType').value;
+        const config = MASTER_CONFIG[type] || {};
+        const groupText = document.getElementById('group-text');
+        const labelBody = document.getElementById('label-body');
+        
+        groupText.classList.toggle('hidden', !config.isSession || (config.isFreeMedia && !config.caption) || type === 'document' || type === 'audio_session');
+        
+        if (type === 'image_free' || type === 'video_session') {
+            labelBody.innerText = "Caption del Media";
+            document.getElementById('body').value = config.caption || "";
+        } else {
+            labelBody.innerText = "Cuerpo del Mensaje";
         }
 
-        function toggleContentFields() {
-            const type = document.getElementById('msgType').value;
-            const config = MASTER_CONFIG[type] || {};
-            const groupText = document.getElementById('group-text');
-            const labelBody = document.getElementById('label-body');
-            
-            groupText.classList.toggle('hidden', !config.isSession || (config.isFreeMedia && !config.caption) || type === 'document' || type === 'audio_session');
-            
-            if (type === 'image_free' || type === 'video_session') {
-                labelBody.innerText = "Caption del Media";
-                document.getElementById('body').value = config.caption || "";
-            } else {
-                labelBody.innerText = "Cuerpo del Mensaje";
-            }
+        const varsContainer = document.getElementById('vars-container');
+        varsContainer.innerHTML = '';
+        if (config.vars) {
+            config.vars.forEach((v, i) => {
+                varsContainer.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1 uppercase font-black tracking-widest">${v}</label>
+                <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs" placeholder="Valor para {{${i+1}}}"></div>`;
+            });
+        }
+        updatePreview();
+    }
 
-            const varsContainer = document.getElementById('vars-container');
-            varsContainer.innerHTML = '';
+    // --- MEJORA: Soporte visual para video en preview ---
+    function updatePreview() {
+        const type = document.getElementById('msgType').value;
+        const config = MASTER_CONFIG[type] || {};
+        const pMedia = document.getElementById('preview-media');
+        const pText = document.getElementById('preview-text');
+        const pBtns = document.getElementById('preview-btns');
+
+        if (config.header || config.isFreeMedia) {
+            pMedia.style.display = 'flex';
+            if (config.mediaUrl) {
+                if (config.header === 'video') {
+                    pMedia.innerHTML = `<video src="${config.mediaUrl}" class="w-full h-full object-cover" muted autoplay loop></video>`;
+                } else {
+                    pMedia.innerHTML = `<img src="${config.mediaUrl}" class="w-full h-full object-cover">`;
+                }
+            } else {
+                const icon = config.header === 'video' ? 'bi-play-circle-fill' : 'bi-paperclip';
+                pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">
+                    <i class="bi ${icon} text-2xl block mb-1"></i> [${(config.header || 'IMAGE').toUpperCase()}]<br>
+                    <span class="text-[8px] font-mono">${config.id || 'READY'}</span>
+                </div>`;
+            }
+        } else { pMedia.style.display = 'none'; }
+
+        let content = "";
+        if (config.isSession) {
+            if (type === 'text') content = document.getElementById('body').value || "Escribe tu mensaje...";
+            else if (config.isFreeMedia || type === 'video_session') content = document.getElementById('body').value || config.caption || "";
+            else if (type === 'document') content = `<span class="italic text-slate-400">📄 ${config.filename}.pdf</span>`;
+        } else {
+            content = config.text || "";
             if (config.vars) {
-                config.vars.forEach((v, i) => {
-                    varsContainer.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1 uppercase font-black tracking-widest">${v}</label>
-                    <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs" placeholder="Valor para {{${i+1}}}"></div>`;
+                config.vars.forEach((_, i) => {
+                    const val = document.getElementById(`v_${i+1}`)?.value || `{{${i+1}}}`;
+                    content = content.replace(`{{${i+1}}}`, `<span class="wa-variable">${val}</span>`);
                 });
             }
-            updatePreview();
+        }
+        pText.innerHTML = content;
+
+        pBtns.innerHTML = '';
+        if (config.btns) {
+            config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
+        }
+    }
+
+    async function initProcess() {
+        const btn = document.getElementById('sendBtn');
+        const type = document.getElementById('msgType').value;
+        const config = MASTER_CONFIG[type] || {};
+        btn.disabled = true;
+        let contacts = [];
+
+        if (currentMode === 'individual') {
+            const full = iti.getNumber();
+            if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
+            contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
+        } else {
+            const f = document.getElementById('file').files[0];
+            if (!f) { alert("Carga un Excel"); btn.disabled = false; return; }
+            const data = await f.arrayBuffer();
+            const workbook = XLSX.read(data);
+            contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
+                phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
+                name: r.name || r.nombre || 'Cliente'
+            })).filter(c => c.phone.length >= 9);
         }
 
-        function updatePreview() {
-            const type = document.getElementById('msgType').value;
-            const config = MASTER_CONFIG[type] || {};
-            const pMedia = document.getElementById('preview-media');
-            const pText = document.getElementById('preview-text');
-            const pBtns = document.getElementById('preview-btns');
-
-            if (config.header || config.isFreeMedia) {
-                pMedia.style.display = 'flex';
-                if (config.mediaUrl) {
-                    pMedia.innerHTML = `<img src="${config.mediaUrl}" class="w-full h-full object-cover">`;
-                } else {
-                    pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">📎 [${(config.header || 'IMAGE').toUpperCase()}]<br><span class="text-[8px] font-mono">${config.id || 'READY'}</span></div>`;
-                }
-            } else { pMedia.style.display = 'none'; }
-
-            let content = "";
-            if (config.isSession) {
-                if (type === 'text') content = document.getElementById('body').value || "Escribe tu mensaje...";
-                else if (config.isFreeMedia || type === 'video_session') content = document.getElementById('body').value || config.caption || "";
-                else if (type === 'document') content = `<span class="italic text-slate-400">📄 ${config.filename}.pdf</span>`;
-            } else {
-                content = config.text || "";
-                if (config.vars) {
-                    config.vars.forEach((_, i) => {
-                        const val = document.getElementById(`v_${i+1}`)?.value || `{{${i+1}}}`;
-                        content = content.replace(`{{${i+1}}}`, `<span class="wa-variable">${val}</span>`);
-                    });
-                }
-            }
-            pText.innerHTML = content;
-
-            pBtns.innerHTML = '';
-            if (config.btns) {
-                config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
-            }
-        }
-
-        async function initProcess() {
-            const btn = document.getElementById('sendBtn');
-            const type = document.getElementById('msgType').value;
-            const config = MASTER_CONFIG[type] || {};
-            btn.disabled = true;
-            let contacts = [];
-
-            if (currentMode === 'individual') {
-                const full = iti.getNumber();
-                if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
-                contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
-            } else {
-                const f = document.getElementById('file').files[0];
-                if (!f) { alert("Carga un Excel"); btn.disabled = false; return; }
-                const data = await f.arrayBuffer();
-                const workbook = XLSX.read(data);
-                contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
-                    phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
-                    name: r.name || r.nombre || 'Cliente'
-                })).filter(c => c.phone.length >= 9);
-            }
-
-            for (let c of contacts) {
-                renderLog(c.phone, 'Transmitiendo...');
-                try {
-                    let payload = { to: c.phone };
-                    
-                    if (config.isSession) {
-                        payload.type = type === 'image_free' ? 'image' : type.replace('_session','');
-                        if (config.id) {
-                            payload[payload.type] = { id: config.id };
-                            if (payload.type === 'image' || payload.type === 'video') {
-                                payload[payload.type].caption = document.getElementById('body').value;
-                            }
-                            if (type === 'document') payload[payload.type].filename = config.filename;
-                        } else if (type === 'text') {
-                            payload.message = document.getElementById('body').value;
+        for (let c of contacts) {
+            renderLog(c.phone, 'Transmitiendo...');
+            try {
+                let payload = { to: c.phone };
+                
+                if (config.isSession) {
+                    payload.type = type === 'image_free' ? 'image' : type.replace('_session','');
+                    if (config.id) {
+                        payload[payload.type] = { id: config.id };
+                        if (payload.type === 'image' || payload.type === 'video') {
+                            payload[payload.type].caption = document.getElementById('body').value;
                         }
-                    } else {
-                        payload.type = 'template';
-                        payload.templateName = type;
-                        payload.vars = config.vars.map((_, i) => document.getElementById(`v_${i+1}`).value || (i === 0 ? c.name : 'Val'));
-                        if (config.header) payload.header = { type: config.header, link: config.mediaUrl };
+                        if (type === 'document') payload[payload.type].filename = config.filename;
+                    } else if (type === 'text') {
+                        payload.message = document.getElementById('body').value;
                     }
+                } else {
+                    payload.type = 'template';
+                    payload.templateName = type;
+                    payload.vars = config.vars.map((_, i) => document.getElementById(`v_${i+1}`).value || (i === 0 ? c.name : 'Val'));
+                    if (config.header) payload.header = { type: config.header, link: config.mediaUrl };
+                }
 
-                    const res = await fetch(WORKER_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-                    const resJson = await res.json();
-                    if (resJson.code === 0) updateLog(c.phone, 'ÉXITO', 'success', 'bi-check2-all');
-                    else updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
-                } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
-            }
-            btn.disabled = false;
+                const resJson = await res.json();
+                if (resJson.code === 0) updateLog(c.phone, 'ÉXITO', 'success', 'bi-check2-all');
+                else updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
+            } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
         }
+        btn.disabled = false;
+    }
 
-        function renderLog(phone, msg) {
-            const div = document.createElement('div');
-            div.id = `log-${phone}`;
-            div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 mb-3 animate-pulse';
-            div.innerHTML = `<div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] text-blue-400 font-bold">${phone.slice(-4)}</div>
-                <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 uppercase font-mono italic">${msg}</p></div>
-            </div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
-            document.getElementById('logs').prepend(div);
-        }
+    function renderLog(phone, msg) {
+        const div = document.createElement('div');
+        div.id = `log-${phone}`;
+        div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 mb-3 animate-pulse';
+        div.innerHTML = `<div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] text-blue-400 font-bold">${phone.slice(-4)}</div>
+            <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 uppercase font-mono italic">${msg}</p></div>
+        </div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
+        document.getElementById('logs').prepend(div);
+    }
 
-        function updateLog(phone, msg, status, icon) {
-            const row = document.getElementById(`log-${phone}`);
-            const badge = document.getElementById(`badge-${phone}`);
-            row.classList.remove('animate-pulse');
-            row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
-            badge.className = `status-pill status-${status}`;
-            badge.innerHTML = `<i class="bi ${icon}"></i> ${status.toUpperCase()}`;
-            document.getElementById(`txt-${phone}`).innerText = msg;
-        }
+    function updateLog(phone, msg, status, icon) {
+        const row = document.getElementById(`log-${phone}`);
+        if (!row) return;
+        const badge = document.getElementById(`badge-${phone}`);
+        row.classList.remove('animate-pulse');
+        row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
+        badge.className = `status-pill status-${status}`;
+        badge.innerHTML = `<i class="bi ${icon}"></i> ${status.toUpperCase()}`;
+        document.getElementById(`txt-${phone}`).innerText = msg;
+    }
 
-        document.getElementById('file').onchange = (e) => {
-            if(e.target.files.length) document.getElementById('file-name').innerText = e.target.files[0].name;
-        };
-    </script>
+    document.getElementById('file').onchange = (e) => {
+        if(e.target.files.length) document.getElementById('file-name').innerText = e.target.files[0].name;
+    };
+</script>
 </body>
 </html>
