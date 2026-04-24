@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NXAI | WA Sender</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/css/intlTelInput.css">
     
@@ -14,85 +14,447 @@
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
 
     <style>
-        body { font-family: 'Outfit', sans-serif; background: radial-gradient(circle at 0% 0%, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; transition: all 0.4s ease; }
-        .glass-card:hover { border-color: #38bdf8; background: rgba(255, 255, 255, 0.04); }
-        .gradient-btn { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
-        .iti { width: 100%; }
-        input, select, textarea { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; border-radius: 14px !important; }
-        .status-pill { padding: 2px 10px; border-radius: 99px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-        .status-waiting { background: #334155; color: #94a3b8; }
-        .status-success { background: #065f46; color: #34d399; }
-        .status-error { background: #7f1d1d; color: #f87171; }
-        .type-active { border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.1); }
+        :root {
+            --nx-green: #39ff14;
+            --nx-green-dark: #1a8f0a;
+            --nx-black: #050505;
+            --nx-glass: rgba(20, 20, 20, 0.6);
+        }
+
+        * {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body { 
+            background: var(--nx-black); 
+            color: #ffffff; 
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Aurora Background Animation */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(57, 255, 20, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(57, 255, 20, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.8) 0%, #050505 100%);
+            animation: aurora 20s ease-in-out infinite;
+        }
+
+        @keyframes aurora {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            33% { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
+            66% { transform: scale(0.95) rotate(-5deg); opacity: 0.9; }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism 2.0 */
+        .glass-card { 
+            background: var(--nx-glass); 
+            backdrop-filter: blur(24px) saturate(180%); 
+            border: 1px solid rgba(57, 255, 20, 0.15); 
+            border-radius: 24px; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.1), transparent);
+            transition: left 0.7s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover { 
+            border-color: rgba(57, 255, 20, 0.4); 
+            transform: translateY(-2px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                0 0 60px rgba(57, 255, 20, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* Neon Buttons */
+        .gradient-btn { 
+            background: linear-gradient(135deg, #39ff14 0%, #1a8f0a 100%); 
+            box-shadow: 
+                0 4px 20px rgba(57, 255, 20, 0.4),
+                0 0 40px rgba(57, 255, 20, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .gradient-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .gradient-btn:hover::after {
+            animation: shine 0.6s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+        }
+
+        .gradient-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 30px rgba(57, 255, 20, 0.5),
+                0 0 60px rgba(57, 255, 20, 0.3);
+        }
+
+        .gradient-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Inputs Modernos */
+        .modern-input { 
+            background: rgba(0, 0, 0, 0.4) !important; 
+            border: 1px solid rgba(57, 255, 20, 0.2) !important; 
+            color: white !important; 
+            border-radius: 16px !important;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .modern-input:focus { 
+            border-color: var(--nx-green) !important;
+            box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.1), 0 0 20px rgba(57, 255, 20, 0.2) !important;
+            outline: none;
+        }
+
+        .modern-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Status Pills */
+        .status-pill { 
+            padding: 4px 12px; 
+            border-radius: 99px; 
+            font-size: 0.65rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border: 1px solid;
+        }
         
-        .wa-chat-bg { background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover; border-radius: 24px; padding: 20px; border: 6px solid #0f172a; width: 100%; max-width: 340px; margin: 0 auto; }
-        .wa-bubble { background: white; border-radius: 0 15px 15px 15px; padding: 10px; color: #333; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 1px rgba(0,0,0,0.2); }
-        .wa-media-box { width: 100%; border-radius: 10px; margin-bottom: 8px; overflow: hidden; background: #eee; display: flex; align-items: center; justify-content: center; min-height: 120px; }
-        .wa-btn-preview { border-top: 1px solid #eee; margin: 8px -10px -10px -10px; padding: 10px; text-align: center; color: #00a5f4; font-weight: 600; font-size: 13px; }
-        .wa-variable { color: #0ea5e9; font-weight: bold; background: rgba(14, 165, 233, 0.1); border-radius: 3px; padding: 0 2px; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .status-waiting { 
+            background: rgba(148, 163, 184, 0.1); 
+            color: #94a3b8; 
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+        
+        .status-success { 
+            background: rgba(57, 255, 20, 0.1); 
+            color: #39ff14; 
+            border-color: rgba(57, 255, 20, 0.3);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+        }
+        
+        .status-error { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: #ef4444; 
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Mode Selection */
+        .type-active { 
+            border: 2px solid var(--nx-green); 
+            background: rgba(57, 255, 20, 0.1);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+            color: var(--nx-green);
+        }
+
+        .type-active i {
+            color: var(--nx-green);
+        }
+
+        /* WhatsApp Preview Ultra Realista */
+        .wa-chat-bg { 
+            background: linear-gradient(180deg, #0f1419 0%, #1a1f2e 100%);
+            border-radius: 32px; 
+            padding: 24px; 
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            width: 100%; 
+            max-width: 360px; 
+            margin: 0 auto;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wa-chat-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(57, 255, 20, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .wa-bubble { 
+            background: rgba(30, 41, 59, 0.9); 
+            border-radius: 0 20px 20px 20px; 
+            padding: 16px; 
+            color: #e2e8f0; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(57, 255, 20, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .wa-media-box { 
+            width: 100%; 
+            border-radius: 16px; 
+            margin-bottom: 12px; 
+            overflow: hidden; 
+            background: rgba(0, 0, 0, 0.3); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 140px;
+            border: 1px solid rgba(57, 255, 20, 0.2);
+        }
+
+        .wa-btn-preview { 
+            border-top: 1px solid rgba(57, 255, 20, 0.2); 
+            margin: 12px -16px -16px -16px; 
+            padding: 12px; 
+            text-align: center; 
+            color: var(--nx-green); 
+            font-weight: 700; 
+            font-size: 13px;
+            background: rgba(57, 255, 20, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .wa-btn-preview:hover {
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .wa-variable { 
+            color: var(--nx-green); 
+            font-weight: 700; 
+            background: rgba(57, 255, 20, 0.15); 
+            border-radius: 6px; 
+            padding: 2px 6px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+        }
+
+        /* Terminal Logs */
+        .terminal-log {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .custom-scroll::-webkit-scrollbar { 
+            width: 6px; 
+        }
+        
+        .custom-scroll::-webkit-scrollbar-track { 
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 10px;
+        }
+        
+        .custom-scroll::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, var(--nx-green), var(--nx-green-dark)); 
+            border-radius: 10px;
+        }
+
+        /* Animaciones */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.6); }
+        }
+
+        .animate-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Logo NXAI Style */
+        .nx-logo {
+            font-weight: 900;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff 0%, var(--nx-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.3));
+        }
+
+        /* File Upload Zone */
+        .upload-zone {
+            border: 2px dashed rgba(57, 255, 20, 0.3);
+            transition: all 0.3s ease;
+            background: rgba(57, 255, 20, 0.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--nx-green);
+            background: rgba(57, 255, 20, 0.05);
+            transform: scale(1.02);
+        }
+
+        /* Select Moderno */
+        select.modern-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+
+        /* Header Glow */
+        .header-glow {
+            position: relative;
+        }
+
+        .header-glow::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 40px;
+            background: radial-gradient(ellipse, rgba(57, 255, 20, 0.3), transparent);
+            filter: blur(20px);
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .wa-chat-bg { max-width: 100%; }
+        }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-            <div class="flex items-center gap-5">
-                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center">
-                    <span class="text-blue-600 font-black text-3xl">NXAI</span>
+    <div class="aurora-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 header-glow">
+            <div class="flex items-center gap-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-white to-gray-200 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-6 transition-transform duration-300">
+                    <span class="text-black font-black text-2xl tracking-tighter">NX</span>
                 </div>
                 <div>
-                    <h1 class="text-4xl font-extrabold tracking-tight italic"><span class="text-blue-400 not-italic">NXAI</span></h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-[0.3em] uppercase">WhatsApp Demo Sender</p>
+                    <h1 class="text-5xl font-black tracking-tight nx-logo">NXAI</h1>
+                    <p class="text-green-400 text-xs font-bold tracking-[0.4em] uppercase mt-1 opacity-80">WhatsApp Intelligence System</p>
                 </div>
             </div>
-            <div class="flex gap-4 items-center glass-card px-6 py-3">
+            
+            <div class="glass-card px-8 py-4 flex gap-6 items-center animate-glow">
                 <div class="text-right">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase italic">Sistema listo</p>
-                    <p id="counter" class="text-white font-mono text-lg italic font-black">Disponible</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">System Status</p>
+                    <p id="counter" class="text-white font-mono text-xl font-black">ONLINE</p>
                 </div>
-                <div class="h-8 w-[1px] bg-slate-700"></div>
-                <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
+                <div class="h-10 w-[1px] bg-gradient-to-b from-transparent via-green-500 to-transparent"></div>
+                <div class="flex items-center gap-3 text-green-400 font-bold text-sm">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span> ONLINE
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 shadow-[0_0_10px_#39ff14]"></span>
+                    </span> 
+                    <span class="tracking-wider">LIVE</span>
                 </div>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Panel de Control -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="glass-card p-8">
                     <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-4 text-center type-active">
-                            <i class="bi bi-person-fill text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Individual</span>
+                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-5 text-center type-active group">
+                            <i class="bi bi-person-fill text-3xl mb-2 block transition-transform group-hover:scale-110"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Individual</span>
                         </button>
-                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-4 text-center opacity-50">
-                            <i class="bi bi-people-fill text-2xl mb-1 block"></i>
-                            <span class="text-[10px] font-bold uppercase">Masivo</span>
+                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-5 text-center opacity-50 hover:opacity-100 transition-opacity group">
+                            <i class="bi bi-people-fill text-3xl mb-2 block transition-transform group-hover:scale-110"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Masivo</span>
                         </button>
                     </div>
 
                     <div id="ind-target" class="mb-6">
-                        <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic tracking-widest">Número de WhatsApp</label>
-                        <input type="tel" id="phone" class="w-full p-4">
+                        <label class="block text-[10px] font-black text-green-400 uppercase mb-3 tracking-widest flex items-center gap-2">
+                            <i class="bi bi-telephone-fill"></i> Destinatario
+                        </label>
+                        <input type="tel" id="phone" class="w-full p-4 modern-input text-lg" placeholder="+51 999 999 999">
                     </div>
 
                     <div id="bulk-target" class="mb-6 hidden">
-                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer bg-black/20" onclick="document.getElementById('file').click()">
+                        <div class="upload-zone border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer" onclick="document.getElementById('file').click()">
                             <input type="file" id="file" class="hidden" accept=".xlsx, .xls">
-                            <i class="bi bi-cloud-arrow-up text-2xl text-slate-500 mb-2 block"></i>
-                            <p id="file-name" class="text-xs text-slate-400 italic uppercase">Cargar Excel de Contactos</p>
+                            <i class="bi bi-cloud-upload text-4xl text-green-400 mb-3 block"></i>
+                            <p id="file-name" class="text-sm text-gray-400 font-medium uppercase tracking-wider">Arrastra tu Excel aquí</p>
+                            <p class="text-xs text-gray-600 mt-2">o haz clic para seleccionar</p>
                         </div>
                     </div>
 
-                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 italic">Plantillas Disponibles</label>
-                    <select id="msgType" class="w-full p-4 font-bold mb-6" onchange="toggleContentFields()">
-                        <optgroup label="Apertura (Fuera de ventana)">
+                    <label class="block text-[10px] font-black text-green-400 uppercase mb-3 tracking-widest flex items-center gap-2 mt-6">
+                        <i class="bi bi-template"></i> Plantilla
+                    </label>
+                    <select id="msgType" class="w-full p-4 font-bold mb-6 modern-input" onchange="toggleContentFields()">
+                        <optgroup label="🚀 Apertura (Fuera de ventana)" class="bg-gray-900">
                             <option value="soporte_nxai_v1">🛠️ Plantilla Utility</option>
                             <option value="vyv_1">🚀 Plantilla de imagen</option>
                             <option value="promo_video_nxai">🎥 Plantilla de Video</option>
@@ -102,7 +464,7 @@
                             <option value="nxai_interactivo_v1">🔘 Plantilla Interactiva</option>
                             <option value="presentacion_3cx_pdf">📄 Plantilla Documento</option>
                         </optgroup>
-                        <optgroup label="Sesión (Dentro de ventana de conversación)">
+                        <optgroup label="💬 Sesión (Dentro de ventana)" class="bg-gray-900">
                             <option value="text">💬 Mensaje de Texto</option>
                             <option value="image_free">🖼️ Imagen</option>
                             <option value="document">📄 Documento PDF</option>
@@ -113,42 +475,75 @@
 
                     <div id="content-fields" class="space-y-4">
                         <div id="group-text" class="hidden">
-                            <label id="label-body" class="block text-[10px] font-black text-slate-500 uppercase mb-1 italic">Cuerpo del Mensaje</label>
-                            <textarea id="body" rows="3" oninput="updatePreview()" class="w-full p-4 text-sm" placeholder="Usa {{name}} para personalizar"></textarea>
+                            <label id="label-body" class="block text-[10px] font-black text-green-400 uppercase mb-2 tracking-widest">Contenido</label>
+                            <textarea id="body" rows="4" oninput="updatePreview()" class="w-full p-4 text-sm modern-input resize-none" placeholder="Escribe tu mensaje... Usa {{name}} para personalizar"></textarea>
                         </div>
 
                         <div id="vars-container" class="space-y-3"></div>
                     </div>
 
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-transform active:scale-95">
-                        <i class="bi bi-lightning-fill"></i> Enviar mensaje
+                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3">
+                        <i class="bi bi-lightning-charge-fill text-xl"></i> 
+                        <span>Transmitir Mensaje</span>
                     </button>
                 </div>
             </div>
 
+            <!-- Preview -->
             <div class="lg:col-span-4">
-                <div class="sticky top-10">
-                    <h2 class="text-center text-[10px] font-black text-slate-500 uppercase mb-6 italic tracking-widest">Vista Previa del mensaje</h2>
+                <div class="sticky top-8">
+                    <h2 class="text-center text-[10px] font-black text-green-400 uppercase mb-6 tracking-[0.3em] flex items-center justify-center gap-2">
+                        <i class="bi bi-eye-fill"></i> Vista Previa en Tiempo Real
+                    </h2>
                     <div class="wa-chat-bg">
+                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-green-500/20">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-black font-bold text-xs">
+                                NX
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">NXAI Business</p>
+                                <p class="text-green-400 text-[10px]">En línea</p>
+                            </div>
+                        </div>
                         <div class="wa-bubble">
                             <div id="preview-media" class="wa-media-box"></div>
-                            <div id="preview-text"></div>
-                            <div id="preview-btns" class="flex flex-col"></div>
+                            <div id="preview-text" class="text-sm"></div>
+                            <div id="preview-btns" class="flex flex-col mt-2"></div>
+                            <div class="text-[10px] text-gray-500 text-right mt-2">12:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 glass-card p-6 text-center">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Tasa de Entrega</p>
+                        <div class="text-3xl font-black text-green-400">98.5%</div>
+                        <div class="w-full bg-gray-800 rounded-full h-2 mt-3 overflow-hidden">
+                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full" style="width: 98.5%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Logs Terminal -->
             <div class="lg:col-span-4">
-                <div class="glass-card p-8 h-[650px] flex flex-col">
-                    <h2 class="text-sm font-black text-blue-400 uppercase mb-6 italic flex items-center gap-2">
-                        <i class="bi bi-terminal"></i> Estado de Transmisión
+                <div class="glass-card p-6 h-[700px] flex flex-col">
+                    <h2 class="text-sm font-black text-green-400 uppercase mb-6 flex items-center gap-2 tracking-widest">
+                        <i class="bi bi-terminal-fill"></i> 
+                        <span>Transmission Log</span>
+                        <span class="ml-auto text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded">LIVE</span>
                     </h2>
-                    <div id="logs" class="flex-grow space-y-4 overflow-y-auto pr-2 custom-scroll">
-                        <div class="text-center py-20 opacity-20">
-                            <i class="bi bi-broadcast text-6xl block mb-4"></i>
-                            <p class="font-mono text-[10px] uppercase">Enviando...</p>
+                    <div id="logs" class="flex-grow space-y-3 overflow-y-auto pr-2 custom-scroll">
+                        <div class="terminal-log p-6 text-center opacity-30">
+                            <i class="bi bi-broadcast text-5xl block mb-4 text-green-400"></i>
+                            <p class="font-mono text-[10px] uppercase tracking-widest">Esperando transmisión...</p>
                         </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-green-500/20 flex justify-between items-center text-[10px] text-gray-500 font-mono">
+                        <span>SYSTEM: READY</span>
+                        <span class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            CONNECTED
+                        </span>
                     </div>
                 </div>
             </div>
@@ -163,7 +558,6 @@
     const MASTER_CONFIG = {
         'soporte_nxai_v1': { header: null, vars: ['Nombre Cliente', 'Departamento', 'Ticket ID'], text: "Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.", btns: ['Ver Estado'] },
         'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
-        // --- CAMBIO AQUÍ: Plantilla de Video configurada ---
         'promo_video_nxai': { 
             header: 'video', 
             mediaUrl: 'https://pub-0b132dbccbaa45b8b000d404a2b4157a.r2.dev/Instalar_Extension.mp4', 
@@ -187,7 +581,8 @@
         iti = window.intlTelInput(document.querySelector("#phone"), { 
             initialCountry: "pe", 
             separateDialCode: true,
-            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js"
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
+            containerClass: "modern-input"
         });
         toggleContentFields();
     };
@@ -219,14 +614,17 @@
         varsContainer.innerHTML = '';
         if (config.vars) {
             config.vars.forEach((v, i) => {
-                varsContainer.innerHTML += `<div><label class="block text-[9px] text-slate-500 mb-1 uppercase font-black tracking-widest">${v}</label>
-                <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs" placeholder="Valor para {{${i+1}}}"></div>`;
+                varsContainer.innerHTML += `
+                    <div class="glass-card p-4">
+                        <label class="block text-[9px] text-green-400 mb-2 uppercase font-black tracking-widest">${v}</label>
+                        <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs modern-input" placeholder="Valor para {{${i+1}}}">
+                    </div>
+                `;
             });
         }
         updatePreview();
     }
 
-    // --- MEJORA: Soporte visual para video en preview ---
     function updatePreview() {
         const type = document.getElementById('msgType').value;
         const config = MASTER_CONFIG[type] || {};
@@ -238,16 +636,19 @@
             pMedia.style.display = 'flex';
             if (config.mediaUrl) {
                 if (config.header === 'video') {
-                    pMedia.innerHTML = `<video src="${config.mediaUrl}" class="w-full h-full object-cover" muted autoplay loop></video>`;
+                    pMedia.innerHTML = `<video src="${config.mediaUrl}" class="w-full h-full object-cover" muted autoplay loop playsinline></video>`;
                 } else {
                     pMedia.innerHTML = `<img src="${config.mediaUrl}" class="w-full h-full object-cover">`;
                 }
             } else {
                 const icon = config.header === 'video' ? 'bi-play-circle-fill' : 'bi-paperclip';
-                pMedia.innerHTML = `<div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">
-                    <i class="bi ${icon} text-2xl block mb-1"></i> [${(config.header || 'IMAGE').toUpperCase()}]<br>
-                    <span class="text-[8px] font-mono">${config.id || 'READY'}</span>
-                </div>`;
+                pMedia.innerHTML = `
+                    <div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">
+                        <i class="bi ${icon} text-3xl block mb-2 text-green-400"></i> 
+                        [${(config.header || 'IMAGE').toUpperCase()}]<br>
+                        <span class="text-[8px] font-mono text-green-400">${config.id || 'READY'}</span>
+                    </div>
+                `;
             }
         } else { pMedia.style.display = 'none'; }
 
@@ -255,7 +656,7 @@
         if (config.isSession) {
             if (type === 'text') content = document.getElementById('body').value || "Escribe tu mensaje...";
             else if (config.isFreeMedia || type === 'video_session') content = document.getElementById('body').value || config.caption || "";
-            else if (type === 'document') content = `<span class="italic text-slate-400">📄 ${config.filename}.pdf</span>`;
+            else if (type === 'document') content = `<span class="italic text-gray-400 flex items-center gap-2"><i class="bi bi-file-earmark-pdf-fill text-red-400"></i> ${config.filename}.pdf</span>`;
         } else {
             content = config.text || "";
             if (config.vars) {
@@ -269,7 +670,9 @@
 
         pBtns.innerHTML = '';
         if (config.btns) {
-            config.btns.forEach(b => { pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; });
+            config.btns.forEach(b => { 
+                pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; 
+            });
         }
     }
 
@@ -277,16 +680,28 @@
         const btn = document.getElementById('sendBtn');
         const type = document.getElementById('msgType').value;
         const config = MASTER_CONFIG[type] || {};
+        const originalContent = btn.innerHTML;
         btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> <span>Procesando...</span>';
         let contacts = [];
 
         if (currentMode === 'individual') {
             const full = iti.getNumber();
-            if (!iti.isValidNumber()) { alert("Número inválido"); btn.disabled = false; return; }
+            if (!iti.isValidNumber()) { 
+                alert("Número inválido"); 
+                btn.disabled = false; 
+                btn.innerHTML = originalContent;
+                return; 
+            }
             contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
         } else {
             const f = document.getElementById('file').files[0];
-            if (!f) { alert("Carga un Excel"); btn.disabled = false; return; }
+            if (!f) { 
+                alert("Carga un Excel"); 
+                btn.disabled = false; 
+                btn.innerHTML = originalContent;
+                return; 
+            }
             const data = await f.arrayBuffer();
             const workbook = XLSX.read(data);
             contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
@@ -296,7 +711,7 @@
         }
 
         for (let c of contacts) {
-            renderLog(c.phone, 'Transmitiendo...');
+            renderLog(c.phone, 'Iniciando transmisión...');
             try {
                 let payload = { to: c.phone };
                 
@@ -325,21 +740,32 @@
                 });
 
                 const resJson = await res.json();
-                if (resJson.code === 0) updateLog(c.phone, 'ÉXITO', 'success', 'bi-check2-all');
+                if (resJson.code === 0) updateLog(c.phone, 'Entregado correctamente', 'success', 'bi-check2-all');
                 else updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
-            } catch (e) { updateLog(c.phone, 'Error de Red', 'error', 'bi-wifi-off'); }
+            } catch (e) { updateLog(c.phone, 'Error de conexión', 'error', 'bi-wifi-off'); }
         }
         btn.disabled = false;
+        btn.innerHTML = originalContent;
     }
 
     function renderLog(phone, msg) {
         const div = document.createElement('div');
         div.id = `log-${phone}`;
-        div.className = 'glass-card p-5 flex justify-between items-center border-l-4 border-slate-600 mb-3 animate-pulse';
-        div.innerHTML = `<div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] text-blue-400 font-bold">${phone.slice(-4)}</div>
-            <div><p class="text-[11px] font-black">+${phone}</p><p id="txt-${phone}" class="text-[9px] text-slate-500 uppercase font-mono italic">${msg}</p></div>
-        </div><div id="badge-${phone}" class="status-pill status-waiting">PROCESSING</div>`;
+        div.className = 'terminal-log p-4 flex justify-between items-center border-l-4 border-green-500 mb-3 animate-pulse';
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center text-black font-bold text-xs shadow-lg">
+                    ${phone.slice(-4)}
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-white">+${phone}</p>
+                    <p id="txt-${phone}" class="text-[10px] text-gray-400 uppercase font-mono">${msg}</p>
+                </div>
+            </div>
+            <div id="badge-${phone}" class="status-pill status-waiting">
+                <i class="bi bi-hourglass-split"></i> PROCESANDO
+            </div>
+        `;
         document.getElementById('logs').prepend(div);
     }
 
@@ -348,14 +774,21 @@
         if (!row) return;
         const badge = document.getElementById(`badge-${phone}`);
         row.classList.remove('animate-pulse');
-        row.style.borderLeftColor = status === 'success' ? '#10b981' : '#ef4444';
+        row.style.borderLeftColor = status === 'success' ? '#39ff14' : '#ef4444';
         badge.className = `status-pill status-${status}`;
         badge.innerHTML = `<i class="bi ${icon}"></i> ${status.toUpperCase()}`;
         document.getElementById(`txt-${phone}`).innerText = msg;
+        
+        // Efecto de sonido visual
+        row.style.transform = 'scale(1.02)';
+        setTimeout(() => row.style.transform = 'scale(1)', 200);
     }
 
     document.getElementById('file').onchange = (e) => {
-        if(e.target.files.length) document.getElementById('file-name').innerText = e.target.files[0].name;
+        if(e.target.files.length) {
+            const name = e.target.files[0].name;
+            document.getElementById('file-name').innerHTML = `<span class="text-green-400 font-bold">${name}</span><br><span class="text-xs text-gray-500">Listo para procesar</span>`;
+        }
     };
 </script>
 </body>
