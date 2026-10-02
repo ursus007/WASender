@@ -4,792 +4,881 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NXAI | WA Sender</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/css/intlTelInput.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
 
     <style>
         :root {
-            --nx-green: #39ff14;
-            --nx-green-dark: #1a8f0a;
-            --nx-black: #050505;
-            --nx-glass: rgba(20, 20, 20, 0.6);
+            --bg: #EDF1F6;
+            --surface: #FFFFFF;
+            --surface-2: #F6F8FB;
+            --ink: #14202E;
+            --muted: #5A6878;
+            --line: #D5DDE7;
+            --accent: #1E4FD0;
+            --accent-dark: #173EA6;
+            --accent-soft: #E6EDFC;
+            --ok: #17804F;
+            --ok-soft: #E3F4EB;
+            --err: #BF352B;
+            --err-soft: #FBE9E7;
+            --warn: #9A6200;
+            --warn-soft: #FCF1DA;
+            --wa-wall: #EFE9E0;
+            --wa-link: #0A7CB8;
+            --radius: 14px;
+            --font-body: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --font-head: 'Bricolage Grotesque', var(--font-body);
         }
 
-        * {
-            font-family: 'Outfit', sans-serif;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
 
-        body { 
-            background: var(--nx-black); 
-            color: #ffffff; 
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 15px;
+            line-height: 1.45;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
         }
 
-        /* Aurora Background Animation */
-        .aurora-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(ellipse at 20% 20%, rgba(57, 255, 20, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(57, 255, 20, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.8) 0%, #050505 100%);
-            animation: aurora 20s ease-in-out infinite;
+        h1, h2 { font-family: var(--font-head); margin: 0; letter-spacing: -0.01em; }
+
+        button, input, select, textarea { font: inherit; color: inherit; }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        .hidden { display: none !important; }
+
+        /* ---------- Cabecera ---------- */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 22px 24px 6px;
         }
 
-        @keyframes aurora {
-            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-            33% { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
-            66% { transform: scale(0.95) rotate(-5deg); opacity: 0.9; }
-        }
+        .brand { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+        .brand h1 { font-size: 28px; font-weight: 700; white-space: nowrap; }
+        .brand span { color: var(--muted); font-size: 14px; }
 
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            pointer-events: none;
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            border-radius: 99px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
         }
-
-        /* Glassmorphism 2.0 */
-        .glass-card { 
-            background: var(--nx-glass); 
-            backdrop-filter: blur(24px) saturate(180%); 
-            border: 1px solid rgba(57, 255, 20, 0.15); 
-            border-radius: 24px; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-card::before {
+        .status::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #A9B4C1;
+        }
+        .status[data-state="ok"] { color: var(--ok); }
+        .status[data-state="ok"]::before { background: var(--ok); }
+        .status[data-state="warn"] { color: var(--warn); background: var(--warn-soft); border-color: #EBD49C; }
+        .status[data-state="warn"]::before { background: var(--warn); }
+        .status[data-state="err"] { color: var(--err); background: var(--err-soft); border-color: #F0C2BC; }
+        .status[data-state="err"]::before { background: var(--err); }
+
+        /* ---------- Rejilla ---------- */
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(320px, 400px) minmax(300px, 1fr) minmax(320px, 400px);
+            gap: 24px;
+            align-items: start;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 18px 24px 40px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 22px;
+        }
+
+        .panel h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+        /* ---------- Formulario ---------- */
+        .segmented {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            padding: 4px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+        .segmented button {
+            border: 0;
+            background: transparent;
+            padding: 9px 10px;
+            border-radius: 9px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .segmented button[aria-pressed="true"] {
+            background: var(--surface);
+            color: var(--ink);
+            box-shadow: 0 1px 2px rgba(20, 32, 46, .14);
+        }
+
+        .field { margin-bottom: 16px; }
+        .field > label, .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .hint { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
+
+        .input {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.1), transparent);
-            transition: left 0.7s;
+            padding: 11px 12px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+        .input::placeholder { color: #94A1B0; }
+        .input:hover { border-color: #B9C4D1; }
+        .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        textarea.input { resize: vertical; min-height: 96px; }
+        select.input {
+            appearance: none;
+            padding-right: 38px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235A6878' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
         }
 
-        .glass-card:hover::before {
-            left: 100%;
-        }
+        .iti { width: 100%; }
+        .iti__country-list { font-size: 14px; }
 
-        .glass-card:hover { 
-            border-color: rgba(57, 255, 20, 0.4); 
-            transform: translateY(-2px);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.5),
-                0 0 60px rgba(57, 255, 20, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        .dropzone {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 22px 16px;
+            border: 1.5px dashed #B3C0CF;
+            border-radius: 12px;
+            background: var(--surface-2);
+            cursor: pointer;
         }
+        .dropzone:hover, .dropzone.dragging { border-color: var(--accent); background: var(--accent-soft); }
+        .dropzone i { font-size: 26px; color: var(--accent); display: block; margin-bottom: 6px; }
+        .dropzone strong { display: block; font-weight: 600; }
+        .dropzone small { color: var(--muted); }
 
-        /* Neon Buttons */
-        .gradient-btn { 
-            background: linear-gradient(135deg, #39ff14 0%, #1a8f0a 100%); 
-            box-shadow: 
-                0 4px 20px rgba(57, 255, 20, 0.4),
-                0 0 40px rgba(57, 255, 20, 0.2);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .vars { display: grid; gap: 12px; }
+
+        .btn-send {
+            width: 100%;
+            margin-top: 6px;
+            padding: 13px 16px;
+            border: 0;
+            border-radius: 11px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+        .btn-send:hover { background: var(--accent-dark); }
+        .btn-send:disabled { background: #94A6C9; cursor: progress; }
 
-        .gradient-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.3) 50%,
-                transparent 70%
-            );
-            transform: rotate(45deg);
-            transition: all 0.6s;
-            opacity: 0;
-        }
-
-        .gradient-btn:hover::after {
-            animation: shine 0.6s ease-in-out;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
-        }
-
-        .gradient-btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 
-                0 8px 30px rgba(57, 255, 20, 0.5),
-                0 0 60px rgba(57, 255, 20, 0.3);
-        }
-
-        .gradient-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        /* Inputs Modernos */
-        .modern-input { 
-            background: rgba(0, 0, 0, 0.4) !important; 
-            border: 1px solid rgba(57, 255, 20, 0.2) !important; 
-            color: white !important; 
-            border-radius: 16px !important;
-            transition: all 0.3s ease;
+        .form-error {
+            margin: 12px 0 0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: var(--err-soft);
+            color: var(--err);
+            font-size: 13.5px;
             font-weight: 500;
         }
 
-        .modern-input:focus { 
-            border-color: var(--nx-green) !important;
-            box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.1), 0 0 20px rgba(57, 255, 20, 0.2) !important;
-            outline: none;
-        }
+        /* ---------- Vista previa (teléfono) ---------- */
+        .preview-col { position: sticky; top: 18px; }
+        .preview-col h2 { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 14px; }
 
-        .modern-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Status Pills */
-        .status-pill { 
-            padding: 4px 12px; 
-            border-radius: 99px; 
-            font-size: 0.65rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-            border: 1px solid;
-        }
-        
-        .status-waiting { 
-            background: rgba(148, 163, 184, 0.1); 
-            color: #94a3b8; 
-            border-color: rgba(148, 163, 184, 0.3);
-        }
-        
-        .status-success { 
-            background: rgba(57, 255, 20, 0.1); 
-            color: #39ff14; 
-            border-color: rgba(57, 255, 20, 0.3);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
-        }
-        
-        .status-error { 
-            background: rgba(239, 68, 68, 0.1); 
-            color: #ef4444; 
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        /* Mode Selection */
-        .type-active { 
-            border: 2px solid var(--nx-green); 
-            background: rgba(57, 255, 20, 0.1);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
-            color: var(--nx-green);
-        }
-
-        .type-active i {
-            color: var(--nx-green);
-        }
-
-        /* WhatsApp Preview Ultra Realista */
-        .wa-chat-bg { 
-            background: linear-gradient(180deg, #0f1419 0%, #1a1f2e 100%);
-            border-radius: 32px; 
-            padding: 24px; 
-            border: 1px solid rgba(57, 255, 20, 0.2);
-            width: 100%; 
-            max-width: 360px; 
+        .phone {
+            width: 100%;
+            max-width: 340px;
             margin: 0 auto;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
+            background: #1B2430;
+            border-radius: 38px;
+            padding: 10px;
+            box-shadow: 0 18px 40px -18px rgba(20, 32, 46, .45);
+        }
+        .phone-screen {
+            border-radius: 29px;
+            overflow: hidden;
+            background: var(--wa-wall);
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+        .wa-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: #fff;
+            border-bottom: 1px solid #E4E0D9;
+        }
+        .wa-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--ink);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .wa-head b { display: block; font-size: 14.5px; line-height: 1.2; }
+        .wa-head small { color: var(--muted); font-size: 12px; }
+        .wa-head .bi-patch-check-fill { color: #1FA855; font-size: 12px; }
+
+        .wa-chat { padding: 16px 12px 20px; flex: 1; }
+        .wa-day {
+            width: max-content;
+            margin: 0 auto 12px;
+            padding: 3px 10px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, .92);
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+        .wa-bubble {
+            max-width: 92%;
+            background: #fff;
+            border-radius: 0 10px 10px 10px;
+            padding: 5px 5px 4px;
+            box-shadow: 0 1px 0.5px rgba(11, 20, 26, .13);
+            font-size: 14px;
+            line-height: 1.4;
             overflow: hidden;
         }
-
-        .wa-chat-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: linear-gradient(180deg, rgba(57, 255, 20, 0.1), transparent);
-            pointer-events: none;
+        .wa-media {
+            border-radius: 7px;
+            overflow: hidden;
+            background: #E9EDF0;
+            min-height: 150px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 4px;
         }
-
-        .wa-bubble { 
-            background: rgba(30, 41, 59, 0.9); 
-            border-radius: 0 20px 20px 20px; 
-            padding: 16px; 
-            color: #e2e8f0; 
-            font-size: 14px; 
-            line-height: 1.5; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(57, 255, 20, 0.1);
-            backdrop-filter: blur(10px);
+        .wa-media img, .wa-media video { display: block; width: 100%; max-height: 220px; object-fit: cover; }
+        .wa-media.contain img { object-fit: contain; padding: 18px; background: #fff; }
+        .wa-file {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 12px;
+            min-height: 0;
         }
-
-        .wa-media-box { 
-            width: 100%; 
-            border-radius: 16px; 
-            margin-bottom: 12px; 
-            overflow: hidden; 
-            background: rgba(0, 0, 0, 0.3); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 140px;
-            border: 1px solid rgba(57, 255, 20, 0.2);
+        .wa-file i { font-size: 26px; color: #D04437; }
+        .wa-file span { font-weight: 600; font-size: 13.5px; word-break: break-all; }
+        .wa-file small { display: block; color: var(--muted); font-weight: 400; }
+        .wa-placeholder { color: var(--muted); font-size: 12.5px; text-align: center; padding: 18px 12px; }
+        .wa-placeholder i { display: block; font-size: 30px; margin-bottom: 6px; }
+        .wa-text { padding: 3px 6px 0; white-space: pre-wrap; word-wrap: break-word; }
+        .wa-text:empty { display: none; }
+        .wa-var { background: var(--accent-soft); color: var(--accent-dark); border-radius: 4px; padding: 0 2px; font-weight: 600; }
+        .wa-var.sample { background: transparent; padding: 0; border-bottom: 1.5px dashed #9DB2E6; border-radius: 0; font-weight: 500; }
+        .wa-time { text-align: right; font-size: 11px; color: #7B8791; padding: 2px 6px 0; }
+        .wa-btns { margin-top: 2px; }
+        .wa-btn {
+            border-top: 1px solid #EDEFF1;
+            padding: 9px 8px;
+            text-align: center;
+            color: var(--wa-link);
+            font-weight: 500;
+            font-size: 14px;
         }
+        .preview-note { text-align: center; color: var(--muted); font-size: 12.5px; margin: 14px auto 0; max-width: 320px; }
 
-        .wa-btn-preview { 
-            border-top: 1px solid rgba(57, 255, 20, 0.2); 
-            margin: 12px -16px -16px -16px; 
-            padding: 12px; 
-            text-align: center; 
-            color: var(--nx-green); 
-            font-weight: 700; 
-            font-size: 13px;
-            background: rgba(57, 255, 20, 0.05);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* ---------- Registro ---------- */
+        .log-panel { display: flex; flex-direction: column; max-height: 740px; }
+        .log-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .log-head h2 { margin: 0; }
+        .btn-link { border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 13px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+        .btn-link:hover { background: var(--accent-soft); }
 
-        .wa-btn-preview:hover {
-            background: rgba(57, 255, 20, 0.1);
-        }
+        .counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+        .counter { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; }
+        .counter b { display: block; font-family: var(--font-head); font-size: 22px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+        .counter span { font-size: 12px; color: var(--muted); }
+        .counter.ok b { color: var(--ok); }
+        .counter.err b { color: var(--err); }
 
-        .wa-variable { 
-            color: var(--nx-green); 
-            font-weight: 700; 
-            background: rgba(57, 255, 20, 0.15); 
-            border-radius: 6px; 
-            padding: 2px 6px;
-            border: 1px solid rgba(57, 255, 20, 0.3);
-        }
+        .logs { overflow-y: auto; flex: 1; display: grid; gap: 8px; align-content: start; padding-right: 2px; }
+        .log-empty { text-align: center; color: var(--muted); padding: 34px 12px; font-size: 14px; }
+        .log-empty i { font-size: 28px; display: block; margin-bottom: 8px; color: #9FADBC; }
 
-        /* Terminal Logs */
-        .terminal-log {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(57, 255, 20, 0.2);
-            border-radius: 12px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .custom-scroll::-webkit-scrollbar { 
-            width: 6px; 
-        }
-        
-        .custom-scroll::-webkit-scrollbar-track { 
-            background: rgba(0, 0, 0, 0.3); 
+        .log {
+            border: 1px solid var(--line);
+            border-left: 4px solid #B3C0CF;
             border-radius: 10px;
+            padding: 10px 12px;
+            background: var(--surface);
         }
-        
-        .custom-scroll::-webkit-scrollbar-thumb { 
-            background: linear-gradient(180deg, var(--nx-green), var(--nx-green-dark)); 
-            border-radius: 10px;
+        .log[data-status="ok"] { border-left-color: var(--ok); }
+        .log[data-status="err"] { border-left-color: var(--err); }
+        .log-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .log-phone { font-weight: 600; font-variant-numeric: tabular-nums; }
+        .log-meta { font-size: 12.5px; color: var(--muted); }
+        .log-msg { font-size: 13px; margin-top: 4px; word-break: break-word; }
+        .log[data-status="err"] .log-msg { color: var(--err); }
+
+        .pill { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; white-space: nowrap; background: var(--surface-2); color: var(--muted); }
+        .pill.ok { background: var(--ok-soft); color: var(--ok); }
+        .pill.err { background: var(--err-soft); color: var(--err); }
+
+        .log details { margin-top: 6px; }
+        .log summary { font-size: 12.5px; color: var(--accent); cursor: pointer; font-weight: 600; width: max-content; }
+        .log pre {
+            margin: 6px 0 0;
+            padding: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 11.5px;
+            line-height: 1.45;
+            max-height: 240px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        /* Animaciones */
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.6); }
+        /* ---------- Responsive ---------- */
+        @media (max-width: 1120px) {
+            .layout { grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr); }
+            .log-panel { grid-column: 1 / -1; max-height: none; }
+            .logs { max-height: 460px; }
         }
-
-        .animate-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
+        @media (max-width: 720px) {
+            .topbar { padding: 16px 16px 4px; }
+            .layout { grid-template-columns: 1fr; padding: 14px 16px 32px; gap: 18px; }
+            .preview-col { position: static; }
+            .phone-screen { min-height: 0; }
         }
-
-        /* Logo NXAI Style */
-        .nx-logo {
-            font-weight: 900;
-            letter-spacing: -2px;
-            background: linear-gradient(135deg, #fff 0%, var(--nx-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.3));
-        }
-
-        /* File Upload Zone */
-        .upload-zone {
-            border: 2px dashed rgba(57, 255, 20, 0.3);
-            transition: all 0.3s ease;
-            background: rgba(57, 255, 20, 0.02);
-        }
-
-        .upload-zone:hover {
-            border-color: var(--nx-green);
-            background: rgba(57, 255, 20, 0.05);
-            transform: scale(1.02);
-        }
-
-        /* Select Moderno */
-        select.modern-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.5rem;
-            padding-right: 3rem;
-        }
-
-        /* Header Glow */
-        .header-glow {
-            position: relative;
-        }
-
-        .header-glow::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 40px;
-            background: radial-gradient(ellipse, rgba(57, 255, 20, 0.3), transparent);
-            filter: blur(20px);
-            pointer-events: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .wa-chat-bg { max-width: 100%; }
+        @media (prefers-reduced-motion: no-preference) {
+            .btn-send, .input, .segmented button, .dropzone { transition: background-color .15s, border-color .15s, box-shadow .15s; }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <div class="aurora-bg"></div>
-    <div class="grid-overlay"></div>
-
-    <div class="max-w-7xl mx-auto relative z-10">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 header-glow">
-            <div class="flex items-center gap-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-white to-gray-200 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-6 transition-transform duration-300">
-                    <span class="text-black font-black text-2xl tracking-tighter">NXAI</span>
-                </div>
-                <div>
-                    <h1 class="text-5xl font-black tracking-tight nx-logo">NXAI</h1>
-                    <p class="text-green-400 text-xs font-bold tracking-[0.4em] uppercase mt-1 opacity-80">WhatsApp Sender</p>
-                </div>
-            </div>
-            
-            <div class="glass-card px-8 py-4 flex gap-6 items-center animate-glow">
-                <div class="text-right">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">System Status</p>
-                    <p id="counter" class="text-white font-mono text-xl font-black">ONLINE</p>
-                </div>
-                <div class="h-10 w-[1px] bg-gradient-to-b from-transparent via-green-500 to-transparent"></div>
-                <div class="flex items-center gap-3 text-green-400 font-bold text-sm">
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 shadow-[0_0_10px_#39ff14]"></span>
-                    </span> 
-                    <span class="tracking-wider">LIVE</span>
-                </div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Panel de Control -->
-            <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-8">
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="setMode('individual')" id="btn-mode-ind" class="glass-card p-5 text-center type-active group">
-                            <i class="bi bi-person-fill text-3xl mb-2 block transition-transform group-hover:scale-110"></i>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Individual</span>
-                        </button>
-                        <button onclick="setMode('bulk')" id="btn-mode-bulk" class="glass-card p-5 text-center opacity-50 hover:opacity-100 transition-opacity group">
-                            <i class="bi bi-people-fill text-3xl mb-2 block transition-transform group-hover:scale-110"></i>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Masivo</span>
-                        </button>
-                    </div>
-
-                    <div id="ind-target" class="mb-6">
-                        <label class="block text-[10px] font-black text-green-400 uppercase mb-3 tracking-widest flex items-center gap-2">
-                            <i class="bi bi-telephone-fill"></i> Destinatario
-                        </label>
-                        <input type="tel" id="phone" class="w-full p-4 modern-input text-lg" placeholder="+51 999 999 999">
-                    </div>
-
-                    <div id="bulk-target" class="mb-6 hidden">
-                        <div class="upload-zone border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer" onclick="document.getElementById('file').click()">
-                            <input type="file" id="file" class="hidden" accept=".xlsx, .xls">
-                            <i class="bi bi-cloud-upload text-4xl text-green-400 mb-3 block"></i>
-                            <p id="file-name" class="text-sm text-gray-400 font-medium uppercase tracking-wider">Arrastra tu Excel aquí</p>
-                            <p class="text-xs text-gray-600 mt-2">o haz clic para seleccionar</p>
-                        </div>
-                    </div>
-
-                    <label class="block text-[10px] font-black text-green-400 uppercase mb-3 tracking-widest flex items-center gap-2 mt-6">
-                        <i class="bi bi-template"></i> Plantillas Disponibles
-                    </label>
-                    <select id="msgType" class="w-full p-4 font-bold mb-6 modern-input" onchange="toggleContentFields()">
-                        <optgroup label="🚀 Apertura (Fuera de ventana)" class="bg-gray-900">
-                            <option value="soporte_nxai_v1">🛠️ Plantilla Utility</option>
-                            <option value="vyv_1">🚀 Plantilla de imagen</option>
-                            <option value="promo_video_nxai">🎥 Plantilla de Video</option>
-                            <option value="nxai_cta_web_v1">🌐 Plantilla CTA Web</option>
-                            <option value="nxai_cta_phone_v1">📞 Plantilla CTA Phone</option>
-                            <option value="nxai_solutions_v4">🎠 Plantilla Carrusel</option>
-                            <option value="nxai_interactivo_v1">🔘 Plantilla Interactiva</option>
-                            <option value="presentacion_3cx_pdf">📄 Plantilla Documento</option>
-                        </optgroup>
-                        <optgroup label="💬 Sesión (Dentro de ventana)" class="bg-gray-900">
-                            <option value="text">💬 Mensaje de Texto</option>
-                            <option value="image_free">🖼️ Imagen</option>
-                            <option value="document">📄 Documento PDF</option>
-                            <option value="video_session">🎥 Video</option>
-                            <option value="audio_session">🎵 Audio</option>
-                        </optgroup>
-                    </select>
-
-                    <div id="content-fields" class="space-y-4">
-                        <div id="group-text" class="hidden">
-                            <label id="label-body" class="block text-[10px] font-black text-green-400 uppercase mb-2 tracking-widest">Contenido</label>
-                            <textarea id="body" rows="4" oninput="updatePreview()" class="w-full p-4 text-sm modern-input resize-none" placeholder="Escribe tu mensaje... Usa {{name}} para personalizar"></textarea>
-                        </div>
-
-                        <div id="vars-container" class="space-y-3"></div>
-                    </div>
-
-                    <button id="sendBtn" onclick="initProcess()" class="w-full gradient-btn mt-10 py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3">
-                        <i class="bi bi-lightning-charge-fill text-xl"></i> 
-                        <span>Enviar Mensaje</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Preview -->
-            <div class="lg:col-span-4">
-                <div class="sticky top-8">
-                    <h2 class="text-center text-[10px] font-black text-green-400 uppercase mb-6 tracking-[0.3em] flex items-center justify-center gap-2">
-                        <i class="bi bi-eye-fill"></i> Vista Previa
-                    </h2>
-                    <div class="wa-chat-bg">
-                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-green-500/20">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-black font-bold text-xs">
-                                NX
-                            </div>
-                            <div>
-                                <p class="text-white font-bold text-sm">NXAI WA Sender</p>
-                                <p class="text-green-400 text-[10px]">En línea</p>
-                            </div>
-                        </div>
-                        <div class="wa-bubble">
-                            <div id="preview-media" class="wa-media-box"></div>
-                            <div id="preview-text" class="text-sm"></div>
-                            <div id="preview-btns" class="flex flex-col mt-2"></div>
-                            <div class="text-[10px] text-gray-500 text-right mt-2">12:00</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 glass-card p-6 text-center">
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Tasa de Entrega</p>
-                        <div class="text-3xl font-black text-green-400">99.9%</div>
-                        <div class="w-full bg-gray-800 rounded-full h-2 mt-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full" style="width: 98.5%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Logs Terminal -->
-            <div class="lg:col-span-4">
-                <div class="glass-card p-6 h-[700px] flex flex-col">
-                    <h2 class="text-sm font-black text-green-400 uppercase mb-6 flex items-center gap-2 tracking-widest">
-                        <i class="bi bi-terminal-fill"></i> 
-                        <span>Log de entrega</span>
-                        <span class="ml-auto text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded">LIVE</span>
-                    </h2>
-                    <div id="logs" class="flex-grow space-y-3 overflow-y-auto pr-2 custom-scroll">
-                        <div class="terminal-log p-6 text-center opacity-30">
-                            <i class="bi bi-broadcast text-5xl block mb-4 text-green-400"></i>
-                            <p class="font-mono text-[10px] uppercase tracking-widest">Esperando transmisión...</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 pt-4 border-t border-green-500/20 flex justify-between items-center text-[10px] text-gray-500 font-mono">
-                        <span>SYSTEM: READY</span>
-                        <span class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            CONNECTED
-                        </span>
-                    </div>
-                </div>
-            </div>
+    <header class="topbar">
+        <div class="brand">
+            <h1>WA Sender</h1>
+            <span>NXAI, demo de WhatsApp Business</span>
         </div>
-    </div>
+        <div id="workerStatus" class="status" role="status">Comprobando el worker…</div>
+    </header>
+
+    <main class="layout">
+
+        <!-- Redactar -->
+        <section class="panel" aria-labelledby="h-compose">
+            <h2 id="h-compose">Nuevo envío</h2>
+
+            <div class="segmented" role="group" aria-label="Tipo de envío">
+                <button type="button" id="btn-mode-ind" aria-pressed="true" onclick="setMode('individual')">Un número</button>
+                <button type="button" id="btn-mode-bulk" aria-pressed="false" onclick="setMode('bulk')">Lista en Excel</button>
+            </div>
+
+            <div id="ind-target" class="field">
+                <label for="phone">Número de destino</label>
+                <input type="tel" id="phone" class="input" placeholder="999 999 999" autocomplete="off">
+            </div>
+
+            <div id="bulk-target" class="field hidden">
+                <span class="field-label">Archivo de contactos</span>
+                <button type="button" id="dropzone" class="dropzone">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <strong id="file-name">Elige o arrastra un Excel</strong>
+                    <small id="file-info">.xlsx o .xls</small>
+                </button>
+                <input type="file" id="file" class="hidden" accept=".xlsx,.xls">
+                <p class="hint">Columnas: <b>telefono</b> (con código de país), <b>nombre</b> y, si quieres, <b>var2</b>, <b>var3</b>… para el resto de variables.</p>
+            </div>
+
+            <div class="field">
+                <label for="msgType">Qué enviar</label>
+                <select id="msgType" class="input" onchange="toggleContentFields()">
+                    <optgroup label="Plantillas (abren la conversación)">
+                        <option value="soporte_nxai_v1">Utility: ticket de soporte</option>
+                        <option value="vyv_1">Con imagen</option>
+                        <option value="promo_video_nxai">Con video</option>
+                        <option value="nxai_cta_web_v1">Botón a web</option>
+                        <option value="nxai_cta_phone_v1">Botón de llamada</option>
+                        <option value="nxai_solutions_v4">Carrusel</option>
+                        <option value="nxai_interactivo_v1">Respuestas rápidas</option>
+                        <option value="presentacion_3cx_pdf">Con documento PDF</option>
+                    </optgroup>
+                    <optgroup label="Mensajes de sesión (ventana de 24 h)">
+                        <option value="text">Texto libre</option>
+                        <option value="image_free">Imagen</option>
+                        <option value="document">Documento PDF</option>
+                        <option value="video_session">Video</option>
+                        <option value="audio_session">Audio</option>
+                    </optgroup>
+                </select>
+                <p id="type-hint" class="hint"></p>
+            </div>
+
+            <div id="group-text" class="field hidden">
+                <label id="label-body" for="body">Mensaje</label>
+                <textarea id="body" rows="4" class="input" oninput="updatePreview()" placeholder="Escribe el mensaje"></textarea>
+            </div>
+
+            <div id="vars-container" class="vars field"></div>
+
+            <button type="button" id="sendBtn" class="btn-send" onclick="initProcess()">
+                <i class="bi bi-send-fill"></i><span id="sendLabel">Enviar plantilla</span>
+            </button>
+            <p id="formError" class="form-error hidden" role="alert"></p>
+        </section>
+
+        <!-- Vista previa -->
+        <section class="preview-col" aria-labelledby="h-preview">
+            <h2 id="h-preview">Así lo verá el contacto</h2>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="wa-head">
+                        <div class="wa-avatar">NX</div>
+                        <div>
+                            <b>NXAI <i class="bi bi-patch-check-fill" title="Cuenta de empresa"></i></b>
+                            <small>Cuenta de empresa</small>
+                        </div>
+                    </div>
+                    <div class="wa-chat">
+                        <div class="wa-day">Hoy</div>
+                        <div class="wa-bubble">
+                            <div id="preview-media" class="wa-media"></div>
+                            <div id="preview-text" class="wa-text"></div>
+                            <div id="preview-time" class="wa-time"></div>
+                            <div id="preview-btns" class="wa-btns"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p id="preview-note" class="preview-note"></p>
+        </section>
+
+        <!-- Registro -->
+        <section class="panel log-panel" aria-labelledby="h-log">
+            <div class="log-head">
+                <h2 id="h-log">Registro de envíos</h2>
+                <button type="button" class="btn-link" onclick="clearLogs()">Limpiar</button>
+            </div>
+            <div class="counters">
+                <div class="counter"><b id="c-total">0</b><span>Enviados</span></div>
+                <div class="counter ok"><b id="c-ok">0</b><span>Aceptados</span></div>
+                <div class="counter err"><b id="c-err">0</b><span>Con error</span></div>
+            </div>
+            <div id="logs" class="logs" aria-live="polite">
+                <div id="log-empty" class="log-empty">
+                    <i class="bi bi-inbox"></i>
+                    Aún no hay envíos. Elige una plantilla y pulsa enviar.
+                </div>
+            </div>
+        </section>
+    </main>
 
 <script>
     const WORKER_URL = 'https://nxlink-backend.ursus006.workers.dev';
-    let currentMode = 'individual';
-    let iti;
+    const LOGO = 'https://i.postimg.cc/W3D7tWCX/logo.png';
+    const BULK_PAUSE_MS = 350;
 
+    // vars: [etiqueta, valor de ejemplo que se envía si el campo queda vacío]
     const MASTER_CONFIG = {
-        'soporte_nxai_v1': { header: null, vars: ['Nombre Cliente', 'Departamento', 'Ticket ID'], text: "Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.", btns: ['Ver Estado'] },
-        'vyv_1': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre', 'Vendedor', 'Empresa'], text: "Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.", btns: ['Ver Propuesta'] },
-        'promo_video_nxai': { 
-            header: 'video', 
-            mediaUrl: 'https://pub-0b132dbccbaa45b8b000d404a2b4157a.r2.dev/Instalar_Extension.mp4', 
-            vars: ['Nombre'], 
-            text: "Hola {{1}}, ¡mira este video exclusivo!", 
-            btns: ['Solicitar'] 
-        },
-        'nxai_cta_web_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, conoce más en nuestra web.", btns: ['Ir a Web'] },
-        'nxai_cta_phone_v1': { header: null, vars: ['Nombre'], text: "Hola {{1}}, ¿prefieres una llamada?", btns: ['Llamar Ahora'] },
-        'nxai_solutions_v4': { header: 'image', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, estas son nuestras soluciones.", btns: ['Ver Demo', 'Asesor'] },
-        'nxai_interactivo_v1': { header: null, vars: ['Nombre'], text: "¿Quieres que te contactemos, {{1}}?", btns: ['Sí', 'No'] },
-        'presentacion_3cx_pdf': { header: 'document', mediaUrl: 'https://i.postimg.cc/W3D7tWCX/logo.png', vars: ['Nombre'], text: "Hola {{1}}, adjunto el PDF de 3CX.", btns: ['Descargar Brochure'] },
-        'text': { header: null, isSession: true },
-        'image_free': { header: 'image', isSession: true, id: '1249420694060125', caption: "image test", isFreeMedia: true },
-        'document': { header: 'document', isSession: true, id: '4393679207510947', filename: 'NXAI-VyV' },
-        'video_session': { header: 'video', isSession: true, id: '929780379973389', caption: "Instalar extensión NXLink" },
-        'audio_session': { header: 'audio', isSession: true, id: '2368122460364431' }
+        'soporte_nxai_v1': { header: null, vars: [['Nombre del cliente', 'Cliente'], ['Departamento', 'Soporte'], ['ID de ticket', 'TK-1042']], text: 'Hola {{1}}, tu solicitud para {{2}} ha sido registrada con el ID: {{3}}.', btns: ['Ver Estado'] },
+        'vyv_1': { header: 'image', mediaUrl: LOGO, vars: [['Nombre', 'Cliente'], ['Vendedor', 'Carlos'], ['Empresa', 'NXAI']], text: 'Hola {{1}}, soy {{2}} de {{3}}, te adjunto la info solicitada.', btns: ['Ver Propuesta'] },
+        'promo_video_nxai': { header: 'video', mediaUrl: 'https://pub-0b132dbccbaa45b8b000d404a2b4157a.r2.dev/Instalar_Extension.mp4', vars: [['Nombre', 'Cliente']], text: 'Hola {{1}}, ¡mira este video exclusivo!', btns: ['Solicitar'] },
+        'nxai_cta_web_v1': { header: null, vars: [['Nombre', 'Cliente']], text: 'Hola {{1}}, conoce más en nuestra web.', btns: ['Ir a Web'] },
+        'nxai_cta_phone_v1': { header: null, vars: [['Nombre', 'Cliente']], text: 'Hola {{1}}, ¿prefieres una llamada?', btns: ['Llamar Ahora'] },
+        'nxai_solutions_v4': { header: 'image', mediaUrl: LOGO, vars: [['Nombre', 'Cliente']], text: 'Hola {{1}}, estas son nuestras soluciones.', btns: ['Ver Demo', 'Asesor'] },
+        'nxai_interactivo_v1': { header: null, vars: [['Nombre', 'Cliente']], text: '¿Quieres que te contactemos, {{1}}?', btns: ['Sí', 'No'] },
+        'presentacion_3cx_pdf': { header: 'document', mediaUrl: LOGO, filename: 'documento.pdf', vars: [['Nombre', 'Cliente']], text: 'Hola {{1}}, adjunto el PDF de 3CX.', btns: ['Descargar Brochure'] },
+        'text': { header: null, isSession: true, waType: 'text' },
+        'image_free': { header: 'image', isSession: true, waType: 'image', id: '1249420694060125', caption: 'image test' },
+        'document': { header: 'document', isSession: true, waType: 'document', id: '4393679207510947', filename: 'NXAI-VyV' },
+        'video_session': { header: 'video', isSession: true, waType: 'video', id: '929780379973389', caption: 'Instalar extensión NXLink' },
+        'audio_session': { header: 'audio', isSession: true, waType: 'audio', id: '2368122460364431' }
     };
 
-    window.onload = () => {
-        iti = window.intlTelInput(document.querySelector("#phone"), { 
-            initialCountry: "pe", 
-            separateDialCode: true,
-            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js",
-            containerClass: "modern-input"
-        });
+    let currentMode = 'individual';
+    let iti = null;
+    let bulkContacts = [];
+    let logSeq = 0;
+    const counts = { total: 0, ok: 0, err: 0 };
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    window.addEventListener('load', () => {
+        if (window.intlTelInput) {
+            iti = window.intlTelInput($('phone'), {
+                initialCountry: 'pe',
+                separateDialCode: true,
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js'
+            });
+        }
+        setupDropzone();
         toggleContentFields();
-    };
+        checkWorker();
+    });
 
+    /* ---------- Estado del worker ---------- */
+    async function checkWorker() {
+        const el = $('workerStatus');
+        try {
+            const res = await fetch(WORKER_URL, { method: 'GET' });
+            const data = await res.json().catch(() => null);
+            if (data && data.ok && data.version) {
+                el.dataset.state = 'ok';
+                el.textContent = `Worker conectado (v${data.version})`;
+            } else {
+                el.dataset.state = 'warn';
+                el.textContent = 'El worker responde, pero aún es la versión anterior';
+            }
+        } catch {
+            el.dataset.state = 'err';
+            el.textContent = 'Sin conexión con el worker';
+        }
+    }
+
+    /* ---------- Formulario ---------- */
     function setMode(m) {
         currentMode = m;
-        document.getElementById('ind-target').classList.toggle('hidden', m !== 'individual');
-        document.getElementById('bulk-target').classList.toggle('hidden', m === 'individual');
-        document.getElementById('btn-mode-ind').classList.toggle('type-active', m === 'individual');
-        document.getElementById('btn-mode-bulk').classList.toggle('type-active', m === 'bulk');
+        $('ind-target').classList.toggle('hidden', m !== 'individual');
+        $('bulk-target').classList.toggle('hidden', m === 'individual');
+        $('btn-mode-ind').setAttribute('aria-pressed', String(m === 'individual'));
+        $('btn-mode-bulk').setAttribute('aria-pressed', String(m === 'bulk'));
+        showError('');
+        updateSendLabel();
+    }
+
+    function currentConfig() {
+        const type = $('msgType').value;
+        return { type, config: MASTER_CONFIG[type] || {} };
     }
 
     function toggleContentFields() {
-        const type = document.getElementById('msgType').value;
-        const config = MASTER_CONFIG[type] || {};
-        const groupText = document.getElementById('group-text');
-        const labelBody = document.getElementById('label-body');
-        
-        groupText.classList.toggle('hidden', !config.isSession || (config.isFreeMedia && !config.caption) || type === 'document' || type === 'audio_session');
-        
-        if (type === 'image_free' || type === 'video_session') {
-            labelBody.innerText = "Caption del Media";
-            document.getElementById('body').value = config.caption || "";
-        } else {
-            labelBody.innerText = "Cuerpo del Mensaje";
+        const { type, config } = currentConfig();
+        const hasBody = type === 'text' || type === 'image_free' || type === 'video_session';
+
+        $('group-text').classList.toggle('hidden', !hasBody);
+        if (hasBody) {
+            $('label-body').textContent = type === 'text' ? 'Mensaje' : 'Texto que acompaña al archivo';
+            $('body').value = config.caption || '';
         }
 
-        const varsContainer = document.getElementById('vars-container');
-        varsContainer.innerHTML = '';
-        if (config.vars) {
-            config.vars.forEach((v, i) => {
-                varsContainer.innerHTML += `
-                    <div class="glass-card p-4">
-                        <label class="block text-[9px] text-green-400 mb-2 uppercase font-black tracking-widest">${v}</label>
-                        <input type="text" id="v_${i+1}" oninput="updatePreview()" class="w-full p-3 text-xs modern-input" placeholder="Valor para {{${i+1}}}">
-                    </div>
-                `;
-            });
-        }
+        $('type-hint').textContent = config.isSession
+            ? 'Solo llega si el contacto ya tiene una conversación abierta en las últimas 24 h.'
+            : 'Se puede enviar en cualquier momento. Los campos vacíos usan el valor de ejemplo.';
+
+        const box = $('vars-container');
+        box.innerHTML = '';
+        (config.vars || []).forEach(([label, sample], i) => {
+            const n = i + 1;
+            box.insertAdjacentHTML('beforeend', `
+                <div>
+                    <label class="field-label" for="v_${n}">${esc(label)} <span style="color:var(--muted);font-weight:500">{{${n}}}</span></label>
+                    <input type="text" id="v_${n}" class="input" oninput="updatePreview()" placeholder="${esc(sample)}" autocomplete="off">
+                </div>`);
+        });
+        box.classList.toggle('hidden', !(config.vars || []).length);
+
+        showError('');
+        updateSendLabel();
         updatePreview();
     }
 
+    function updateSendLabel() {
+        const { config } = currentConfig();
+        const what = config.isSession ? 'mensaje' : 'plantilla';
+        $('sendLabel').textContent = currentMode === 'bulk' && bulkContacts.length
+            ? `Enviar ${what} a ${bulkContacts.length} contacto${bulkContacts.length === 1 ? '' : 's'}`
+            : `Enviar ${what}`;
+    }
+
+    function showError(msg) {
+        $('formError').textContent = msg;
+        $('formError').classList.toggle('hidden', !msg);
+    }
+
+    /* ---------- Vista previa ---------- */
     function updatePreview() {
-        const type = document.getElementById('msgType').value;
-        const config = MASTER_CONFIG[type] || {};
-        const pMedia = document.getElementById('preview-media');
-        const pText = document.getElementById('preview-text');
-        const pBtns = document.getElementById('preview-btns');
+        const { type, config } = currentConfig();
+        const pMedia = $('preview-media');
+        const pText = $('preview-text');
+        const pBtns = $('preview-btns');
 
-        if (config.header || config.isFreeMedia) {
-            pMedia.style.display = 'flex';
-            if (config.mediaUrl) {
-                if (config.header === 'video') {
-                    pMedia.innerHTML = `<video src="${config.mediaUrl}" class="w-full h-full object-cover" muted autoplay loop playsinline></video>`;
-                } else {
-                    pMedia.innerHTML = `<img src="${config.mediaUrl}" class="w-full h-full object-cover">`;
-                }
-            } else {
-                const icon = config.header === 'video' ? 'bi-play-circle-fill' : 'bi-paperclip';
-                pMedia.innerHTML = `
-                    <div class="text-[10px] text-gray-400 font-bold uppercase italic text-center p-4">
-                        <i class="bi ${icon} text-3xl block mb-2 text-green-400"></i> 
-                        [${(config.header || 'IMAGE').toUpperCase()}]<br>
-                        <span class="text-[8px] font-mono text-green-400">${config.id || 'READY'}</span>
-                    </div>
-                `;
-            }
-        } else { pMedia.style.display = 'none'; }
-
-        let content = "";
-        if (config.isSession) {
-            if (type === 'text') content = document.getElementById('body').value || "Escribe tu mensaje...";
-            else if (config.isFreeMedia || type === 'video_session') content = document.getElementById('body').value || config.caption || "";
-            else if (type === 'document') content = `<span class="italic text-gray-400 flex items-center gap-2"><i class="bi bi-file-earmark-pdf-fill text-red-400"></i> ${config.filename}.pdf</span>`;
+        pMedia.className = 'wa-media';
+        if (!config.header) {
+            pMedia.classList.add('hidden');
+            pMedia.innerHTML = '';
+        } else if (config.header === 'document') {
+            const name = config.filename || 'documento.pdf';
+            pMedia.classList.add('wa-file');
+            pMedia.innerHTML = `<i class="bi bi-file-earmark-pdf-fill"></i><span>${esc(name)}<small>PDF</small></span>`;
+        } else if (config.header === 'audio') {
+            pMedia.classList.add('wa-file');
+            pMedia.innerHTML = `<i class="bi bi-play-circle-fill" style="color:var(--muted)"></i><span>Nota de audio<small>ID ${esc(config.id)}</small></span>`;
+        } else if (config.mediaUrl && config.header === 'video') {
+            pMedia.innerHTML = `<video src="${esc(config.mediaUrl)}" muted autoplay loop playsinline></video>`;
+        } else if (config.mediaUrl) {
+            pMedia.classList.add('contain');
+            pMedia.innerHTML = `<img src="${esc(config.mediaUrl)}" alt="Imagen de la plantilla">`;
         } else {
-            content = config.text || "";
-            if (config.vars) {
-                config.vars.forEach((_, i) => {
-                    const val = document.getElementById(`v_${i+1}`)?.value || `{{${i+1}}}`;
-                    content = content.replace(`{{${i+1}}}`, `<span class="wa-variable">${val}</span>`);
-                });
-            }
+            const icon = config.header === 'video' ? 'bi-camera-video' : 'bi-image';
+            pMedia.innerHTML = `<div class="wa-placeholder"><i class="bi ${icon}"></i>${config.header === 'video' ? 'Video' : 'Imagen'} ya subido a WhatsApp<br>ID ${esc(config.id)}</div>`;
         }
-        pText.innerHTML = content;
 
-        pBtns.innerHTML = '';
-        if (config.btns) {
-            config.btns.forEach(b => { 
-                pBtns.innerHTML += `<div class="wa-btn-preview">${b}</div>`; 
+        let html = '';
+        if (config.isSession) {
+            if (type === 'text') html = esc($('body').value) || '<span style="color:var(--muted)">Escribe el mensaje</span>';
+            else if (type === 'image_free' || type === 'video_session') html = esc($('body').value);
+        } else {
+            html = esc(config.text || '');
+            (config.vars || []).forEach(([, sample], i) => {
+                const typed = ($(`v_${i + 1}`)?.value || '').trim();
+                const span = typed
+                    ? `<span class="wa-var">${esc(typed)}</span>`
+                    : `<span class="wa-var sample">${esc(sample)}</span>`;
+                html = html.split(`{{${i + 1}}}`).join(span);
             });
         }
+        pText.innerHTML = html;
+
+        pBtns.innerHTML = (config.btns || []).map((b) => `<div class="wa-btn">${esc(b)}</div>`).join('');
+        $('preview-time').textContent = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+        $('preview-note').textContent = config.isSession
+            ? ''
+            : 'El texto y los botones de la vista previa son de referencia; WhatsApp muestra los aprobados en Meta.';
+    }
+
+    /* ---------- Excel ---------- */
+    function setupDropzone() {
+        const dz = $('dropzone');
+        const input = $('file');
+        dz.addEventListener('click', () => input.click());
+        input.addEventListener('change', () => input.files.length && loadExcel(input.files[0]));
+        ['dragenter', 'dragover'].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('dragging'); }));
+        ['dragleave', 'drop'].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove('dragging'); }));
+        dz.addEventListener('drop', (e) => e.dataTransfer.files.length && loadExcel(e.dataTransfer.files[0]));
+    }
+
+    async function loadExcel(file) {
+        showError('');
+        bulkContacts = [];
+        try {
+            const workbook = XLSX.read(await file.arrayBuffer());
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
+            bulkContacts = rows.map((row) => {
+                const r = {};
+                Object.keys(row).forEach((k) => {
+                    const key = k.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '');
+                    r[key] = String(row[k]).trim();
+                });
+                return {
+                    phone: (r.phone || r.telefono || r.celular || r.numero || '').replace(/\D/g, ''),
+                    name: r.name || r.nombre || '',
+                    extra: r
+                };
+            }).filter((c) => c.phone.length >= 9);
+
+            $('file-name').textContent = file.name;
+            $('file-info').textContent = `${bulkContacts.length} contacto${bulkContacts.length === 1 ? '' : 's'} con teléfono válido de ${rows.length} fila${rows.length === 1 ? '' : 's'}`;
+            if (!bulkContacts.length) showError('No encontré teléfonos. Revisa que exista una columna "telefono" o "phone".');
+        } catch (e) {
+            $('file-name').textContent = 'Elige o arrastra un Excel';
+            $('file-info').textContent = '.xlsx o .xls';
+            showError('No pude leer el archivo. Comprueba que sea un Excel válido.');
+        }
+        updateSendLabel();
+    }
+
+    /* ---------- Envío ---------- */
+    function buildPayload(contact) {
+        const { type, config } = currentConfig();
+        const payload = { to: contact.phone };
+
+        if (config.isSession) {
+            payload.type = config.waType;
+            if (type === 'text') {
+                payload.message = $('body').value.trim();
+            } else {
+                const media = { id: config.id };
+                const caption = $('body').value.trim();
+                if ((config.waType === 'image' || config.waType === 'video') && caption) media.caption = caption;
+                if (config.waType === 'document') media.filename = config.filename;
+                payload[config.waType] = media;
+            }
+            return payload;
+        }
+
+        payload.type = 'template';
+        payload.templateName = type;
+        payload.vars = config.vars.map(([, sample], i) => {
+            const typed = ($(`v_${i + 1}`).value || '').trim();
+            const extra = contact.extra || {};
+            // En envíos por Excel manda el dato de la fila; luego lo escrito; luego el ejemplo.
+            const fromSheet = i === 0 ? (contact.name || extra.var1) : extra[`var${i + 1}`];
+            return fromSheet || typed || sample;
+        });
+        if (config.header) {
+            payload.header = { type: config.header, link: config.mediaUrl };
+            if (config.filename) payload.header.filename = config.filename;
+        }
+        return payload;
     }
 
     async function initProcess() {
-        const btn = document.getElementById('sendBtn');
-        const type = document.getElementById('msgType').value;
-        const config = MASTER_CONFIG[type] || {};
-        const originalContent = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> <span>Procesando...</span>';
+        const { type, config } = currentConfig();
+        showError('');
+
         let contacts = [];
-
         if (currentMode === 'individual') {
-            const full = iti.getNumber();
-            if (!iti.isValidNumber()) { 
-                alert("Número inválido"); 
-                btn.disabled = false; 
-                btn.innerHTML = originalContent;
-                return; 
-            }
-            contacts.push({ phone: full.replace('+', ''), name: 'Cliente' });
+            const raw = $('phone').value.trim();
+            if (!raw) return showError('Escribe el número de destino.');
+            if (iti && window.intlTelInputUtils && !iti.isValidNumber()) return showError('El número no es válido para el país elegido.');
+            const full = (iti ? iti.getNumber() : raw).replace(/\D/g, '');
+            if (!iti && full.length < 10) return showError('Escribe el número con código de país, por ejemplo 51 999 999 999.');
+            contacts = [{ phone: full, name: '' }];
         } else {
-            const f = document.getElementById('file').files[0];
-            if (!f) { 
-                alert("Carga un Excel"); 
-                btn.disabled = false; 
-                btn.innerHTML = originalContent;
-                return; 
-            }
-            const data = await f.arrayBuffer();
-            const workbook = XLSX.read(data);
-            contacts = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map(r => ({
-                phone: String(r.phone || r.telefono || '').replace(/\D/g, ''),
-                name: r.name || r.nombre || 'Cliente'
-            })).filter(c => c.phone.length >= 9);
+            if (!bulkContacts.length) return showError('Carga un Excel con al menos un teléfono válido.');
+            contacts = bulkContacts;
         }
+        if (type === 'text' && !$('body').value.trim()) return showError('Escribe el mensaje antes de enviar.');
 
-        for (let c of contacts) {
-            renderLog(c.phone, 'Iniciando transmisión...');
+        const btn = $('sendBtn');
+        const label = $('sendLabel');
+        btn.disabled = true;
+
+        for (let i = 0; i < contacts.length; i++) {
+            const c = contacts[i];
+            label.textContent = contacts.length > 1 ? `Enviando ${i + 1} de ${contacts.length}…` : 'Enviando…';
+            const payload = buildPayload(c);
+            const logId = renderLog(c.phone, config.isSession ? $('msgType').selectedOptions[0].text : type);
             try {
-                let payload = { to: c.phone };
-                
-                if (config.isSession) {
-                    payload.type = type === 'image_free' ? 'image' : type.replace('_session','');
-                    if (config.id) {
-                        payload[payload.type] = { id: config.id };
-                        if (payload.type === 'image' || payload.type === 'video') {
-                            payload[payload.type].caption = document.getElementById('body').value;
-                        }
-                        if (type === 'document') payload[payload.type].filename = config.filename;
-                    } else if (type === 'text') {
-                        payload.message = document.getElementById('body').value;
-                    }
-                } else {
-                    payload.type = 'template';
-                    payload.templateName = type;
-                    payload.vars = config.vars.map((_, i) => document.getElementById(`v_${i+1}`).value || (i === 0 ? c.name : 'Val'));
-                    if (config.header) payload.header = { type: config.header, link: config.mediaUrl };
-                }
-
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                const resJson = await res.json();
-                if (resJson.code === 0) updateLog(c.phone, 'Entregado correctamente', 'success', 'bi-check2-all');
-                else updateLog(c.phone, resJson.message || 'Error', 'error', 'bi-x-circle');
-            } catch (e) { updateLog(c.phone, 'Error de conexión', 'error', 'bi-wifi-off'); }
+                const data = await res.json().catch(() => ({ message: `Respuesta no válida del worker (HTTP ${res.status})` }));
+                const ok = data.ok !== undefined ? data.ok === true : Number(data.code) === 0;
+                updateLog(logId, ok, ok ? 'Aceptado por la API' : describeError(data), { enviado: data.sent || payload, respuesta: stripSent(data) });
+            } catch (e) {
+                updateLog(logId, false, 'No se pudo conectar con el worker.', { enviado: payload });
+            }
+            if (i < contacts.length - 1) await sleep(BULK_PAUSE_MS);
         }
+
         btn.disabled = false;
-        btn.innerHTML = originalContent;
+        updateSendLabel();
     }
 
-    function renderLog(phone, msg) {
+    function describeError(data) {
+        const parts = [];
+        if (data.message || data.msg) parts.push(data.message || data.msg);
+        if (data.code !== undefined && data.code !== null) parts.push(`código ${data.code}`);
+        else if (data.error) parts.push(typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
+        if (data.httpStatus && data.httpStatus >= 400) parts.push(`HTTP ${data.httpStatus}`);
+        return parts.join(', ') || 'La API rechazó el envío.';
+    }
+
+    function stripSent(data) {
+        const { sent, ...rest } = data;
+        return rest;
+    }
+
+    /* ---------- Registro ---------- */
+    function renderLog(phone, what) {
+        const id = `log-${++logSeq}`;
+        $('log-empty')?.classList.add('hidden');
+        const time = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         const div = document.createElement('div');
-        div.id = `log-${phone}`;
-        div.className = 'terminal-log p-4 flex justify-between items-center border-l-4 border-green-500 mb-3 animate-pulse';
+        div.id = id;
+        div.className = 'log';
         div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center text-black font-bold text-xs shadow-lg">
-                    ${phone.slice(-4)}
-                </div>
-                <div>
-                    <p class="text-sm font-bold text-white">+${phone}</p>
-                    <p id="txt-${phone}" class="text-[10px] text-gray-400 uppercase font-mono">${msg}</p>
-                </div>
+            <div class="log-row">
+                <span class="log-phone">+${esc(phone)}</span>
+                <span class="pill">Enviando…</span>
             </div>
-            <div id="badge-${phone}" class="status-pill status-waiting">
-                <i class="bi bi-hourglass-split"></i> PROCESANDO
-            </div>
-        `;
-        document.getElementById('logs').prepend(div);
+            <div class="log-meta">${esc(what)}, ${time}</div>
+            <div class="log-msg"></div>`;
+        $('logs').prepend(div);
+        counts.total++;
+        renderCounts();
+        return id;
     }
 
-    function updateLog(phone, msg, status, icon) {
-        const row = document.getElementById(`log-${phone}`);
+    function updateLog(id, ok, msg, detail) {
+        const row = $(id);
         if (!row) return;
-        const badge = document.getElementById(`badge-${phone}`);
-        row.classList.remove('animate-pulse');
-        row.style.borderLeftColor = status === 'success' ? '#39ff14' : '#ef4444';
-        badge.className = `status-pill status-${status}`;
-        badge.innerHTML = `<i class="bi ${icon}"></i> ${status.toUpperCase()}`;
-        document.getElementById(`txt-${phone}`).innerText = msg;
-        
-        // Efecto de sonido visual
-        row.style.transform = 'scale(1.02)';
-        setTimeout(() => row.style.transform = 'scale(1)', 200);
+        row.dataset.status = ok ? 'ok' : 'err';
+        const pill = row.querySelector('.pill');
+        pill.className = `pill ${ok ? 'ok' : 'err'}`;
+        pill.textContent = ok ? 'Aceptado' : 'Error';
+        row.querySelector('.log-msg').textContent = msg;
+        if (detail) {
+            const d = document.createElement('details');
+            d.innerHTML = `<summary>Ver detalle técnico</summary><pre>${esc(JSON.stringify(detail, null, 2))}</pre>`;
+            row.appendChild(d);
+        }
+        counts[ok ? 'ok' : 'err']++;
+        renderCounts();
     }
 
-    document.getElementById('file').onchange = (e) => {
-        if(e.target.files.length) {
-            const name = e.target.files[0].name;
-            document.getElementById('file-name').innerHTML = `<span class="text-green-400 font-bold">${name}</span><br><span class="text-xs text-gray-500">Listo para procesar</span>`;
-        }
-    };
+    function renderCounts() {
+        $('c-total').textContent = counts.total;
+        $('c-ok').textContent = counts.ok;
+        $('c-err').textContent = counts.err;
+    }
+
+    function clearLogs() {
+        counts.total = counts.ok = counts.err = 0;
+        renderCounts();
+        $('logs').querySelectorAll('.log').forEach((n) => n.remove());
+        $('log-empty').classList.remove('hidden');
+    }
 </script>
 </body>
 </html>
